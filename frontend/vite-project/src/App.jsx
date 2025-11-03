@@ -10,6 +10,8 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import AdminProblemList from "./pages/admin/AdminProblemList";
 import ProblemForm from "./pages/admin/ProblemForm";
 import AdminRoute from "./pages/AdminRoute";
+import Editpages from "./pages/admin/Editpages";
+import CodeEditor from "./pages/CodeEditor";
 
 function App() {
   const { isAuthenticated, loading, user } = useSelector((state) => state.auth);
@@ -54,6 +56,7 @@ function App() {
         path="/signup"
         element={isAuthenticated ? <Navigate to="/" /> : <Signup />}
       />
+      <Route path="/problem/:id" element={<CodeEditor/>}/>
 
       {/* Admin routes */}
       <Route
@@ -66,7 +69,7 @@ function App() {
       >
         <Route index element={<AdminProblemList />} />
         <Route path="create" element={<ProblemForm />} />
-        <Route path="edit/:id" element={<ProblemForm />} />
+        <Route path="edit/:id" element={<Editpages />} />
       </Route>
     </Routes>
   );

@@ -140,6 +140,7 @@ const createproblem = async (req, res) => {
 
 const updateproblem=async(req,res)=>{
 	   const {id}=req.params;
+		 console.log("request body",req.body);
 		//  const {title,description,difficulty,tags,visibletestcases,hiddentestcases,startcode,referencesolution}=req.body;
 		const {
   title,
@@ -258,16 +259,25 @@ const deleteproblem=async(req,res)=>{
 }
 
 const getproblembyid=async(req,res)=>{
+	  console.log("frotend req is comming",req.params);
 	  const {id}=req.params;
 		try{
 	if(!id){
 			return res.status(400).send("id is missing");
 		}
-		const getproblem=await problem.findById(id).select(' _id title decription difficulty tags visibletestcases startcode referencesolution problemcreator');
+		// const getproblem=await problem.findById(id).select(' _id title description difficulty tags visibleTestCases startcode hiddenTestCases problemcreator referencesolution');
+		   const getproblem = await problem.findById(id).select(
+      "_id title description difficulty tags visibleTestCases hiddenTestCases startcode referencesolution problemcreator"
+    );
+		
+
+		
+
 		/// select ke ander jo bhi rahega whi frontend ko jaiyega
 		if(!getproblem){
 			return res.status(404).send("problem is missing");
 		}
+		console.log("req from frontend to edit page:",getproblem);
 		return res.status(200).json(getproblem);
 		}
 		catch(err){

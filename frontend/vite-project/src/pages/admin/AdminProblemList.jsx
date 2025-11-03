@@ -10,7 +10,7 @@ const AdminProblemList = () => {
 		try{
 			const res=await axiosClient.get("/problem/getallproblem");
 			setproblems(res.data);
-
+             
 		}
 		catch(err){
 			console.log("error fetching problems",err);
@@ -36,7 +36,7 @@ const AdminProblemList = () => {
 
 	}
 	return (
-		<div className='space-y-4'>
+		<div className='space-y-4 '>
 			{
 				loading?(
 					<p>Loading problems</p>

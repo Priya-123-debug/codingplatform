@@ -6,6 +6,7 @@ import axiosClient from '../utilis/axiosClient';
 import { logoutUser } from '../store/authSlice';
 import { useEffect } from 'react';
 import Navbar from './Navbar';
+import {Link} from "react-router-dom"
 // import { set } from 'zod/v3';
 
 const Homepage =  () => {
@@ -117,7 +118,9 @@ const Homepage =  () => {
 							return(
 								<div key={problem._id} className='bg-[#2a2a2a] border border-gray-700 rounded-xl shadow-sm p-4 w-250 flex flex-col md:flex-row justify-between items-start hover:bg-[#333333] hover:shadow-md transition  '>
 									<div className='flex flex-col'>
-											<h2 className='text-xl font-semibold mb-2'>{problem.title}</h2>
+											{/* <h2 className='text-xl font-semibold mb-2'>{problem.title}</h2> */}
+											<Link to={`/problem/${problem._id}`} className="text-xl font-semibold mb-2 cursor-pointer">{problem.title}</Link>
+
 									 <div className="flex  w-1/4">
     {/* <span className="text-sm font-semibold mb-1">Difficulty</span> */}
     <span className={`px-3 py-1 rounded-full text-xs font-medium

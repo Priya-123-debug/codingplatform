@@ -4,7 +4,7 @@ import {Navigate} from "react-router-dom";
 
 const AdminRoute = ({ children }) => {
   const { user, isAuthenticated, loading } = useSelector((state) => state.auth);
-	console.log("AdminRoute debug:", { user, isAuthenticated, loading }); // <-- Add this
+	console.log("AdminRoute debug gg:", { user, isAuthenticated, loading }); // <-- Add this
 
   if (loading) {
     return (
