@@ -51,39 +51,43 @@ const problemSchema=new Schema({
 				required:true,
 
 			},
-			startcode:[
-				{
-					language:{
-						type:String,
-						required:true,
-					},
-					initialcode:{
-						type:String,
-						required:true,
-					}
-				}
-			],
 		
-			referencesolution:[
-				{
-					language:{
-						type:String,
-						required:true,
-					},
-					initialcode:{
-						type:String,
-						required:true,
-					}
-				}
-			],
+		
+		
 			
 		
 		}
 	],
+		startcode:[
+				{
+					language:{
+						type:String,
+						required:true,
+					},
+					initialcode:{
+						type:String,
+						required:true,
+					}
+				}
+			],
+				referencesolution:[
+				{
+					language:{
+						type:String,
+						required:true,
+					},
+					initialcode:{
+						type:String,
+						required:true,
+					}
+				}
+			],
+
 		problemcreator:{
 				type:Schema.Types.ObjectId,
 				required:true,
 				ref:"User"
+				// ek scehema dusre schema ko refer kr raha hai taki usme se data le sake or uske basis pe kuch kr sake or store na krna pade sara info
 			},
 })
 const problem=mongoose.model("problem",problemSchema);

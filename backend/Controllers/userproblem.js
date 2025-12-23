@@ -87,55 +87,81 @@ const Submission = require("../models/submission");
 
 // 	}
 // }
+// const createproblem = async (req, res) => {
+// 	 console.log("STARTCODE:", req.body.startcode, Array.isArray(req.body.startcode));
+//     console.log("REFERENCESOLUTION:", req.body.referencesolution, Array.isArray(req.body.referencesolution));
+
+//   try {
+//     const {
+//       title, description, difficulty, tags,
+//       visibleTestCases = [], hiddenTestCases = [],
+//       startcode = [], referencesolution = [], problemcreator
+//     } = req.body;
+
+//     if (!Array.isArray(referencesolution)) {
+//       return res.status(400).json({ message: "referencesolution must be an array" });
+//     }
+
+//     for (const { language, initialcode } of referencesolution) {
+//       const language_id = getLanguageId(language);
+
+//       const submissions = visibleTestCases.map(testcase => ({
+//         source_code: initialcode,
+//         language_id:language_id,
+//         stdin: testcase.input,
+//         expected_output: testcase.output
+//       }));
+
+//       const submitResult = await submitBatch(submissions);
+//       const tokens = submitResult.map(v => v.token);
+//       const testResults = await submitToken(tokens);
+
+//       for (const test of testResults) {
+//         const statusId = test.status.id;
+//         if (statusId !== 3) { // 3 = Accepted
+//           if (statusId === 4) return res.status(400).json({ message: "Wrong Answer" });
+//           if (statusId === 5) return res.status(400).json({ message: "Time Limit Exceeded" });
+//           if (statusId === 6) return res.status(400).json({ message: "Compilation Error" });
+//           if (statusId === 9) return res.status(400).json({ message: "Runtime Error" });
+//         }
+//       }
+//     }
+
+//     const userProblem = await problem.create({
+//       ...req.body,
+//       problemcreator: req.result._id
+//     });
+
+//     return res.status(201).json({ message: "Problem created successfully", problem: userProblem });
+
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(500).json({ message: err.message });
+//   }
+// };
+
 const createproblem = async (req, res) => {
+	 console.log("Frontend sent this data:", req.body);
+  console.log("STARTCODE:", req.body.startcode, Array.isArray(req.body.startcode));
+  console.log("REFERENCESOLUTION:", req.body.referencesolution, Array.isArray(req.body.referencesolution));
+
   try {
-    const {
-      title, description, difficulty, tags,
-      visibleTestCases = [], hiddenTestCases = [],
-      startcode = [], referencesolution = [], problemcreator
-    } = req.body;
-
-    if (!Array.isArray(referencesolution)) {
-      return res.status(400).json({ message: "referencesolution must be an array" });
-    }
-
-    for (const { language, completeCode } of referencesolution) {
-      const language_id = getLanguageId(language);
-
-      const submissions = visibleTestCases.map(testcase => ({
-        source_code: completeCode,
-        language_id,
-        stdin: testcase.input,
-        expected_output: testcase.output
-      }));
-
-      const submitResult = await submitBatch(submissions);
-      const tokens = submitResult.map(v => v.token);
-      const testResults = await submitToken(tokens);
-
-      for (const test of testResults) {
-        const statusId = test.status.id;
-        if (statusId !== 3) { // 3 = Accepted
-          if (statusId === 4) return res.status(400).json({ message: "Wrong Answer" });
-          if (statusId === 5) return res.status(400).json({ message: "Time Limit Exceeded" });
-          if (statusId === 6) return res.status(400).json({ message: "Compilation Error" });
-          if (statusId === 9) return res.status(400).json({ message: "Runtime Error" });
-        }
-      }
-    }
-
     const userProblem = await problem.create({
       ...req.body,
       problemcreator: req.result._id
     });
 
-    return res.status(201).json({ message: "Problem created successfully", problem: userProblem });
-
+    return res.status(201).json({ 
+      message: "Problem created successfully", 
+      problem: userProblem 
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err.message });
   }
 };
+
+
 
 
 const updateproblem=async(req,res)=>{
@@ -163,7 +189,7 @@ const updateproblem=async(req,res)=>{
 		return res.status(404).send("problem not found");
 	}
 				const refs = Array.isArray(referencesolution) ? referencesolution : [];
-		for(const {language,completeCode} of refs){
+		for(const {language,initialcode} of refs){
 
     // source code
 		// language_id
@@ -173,7 +199,7 @@ const updateproblem=async(req,res)=>{
 
 		// i am creating batch submission
     const submissions=visibleTestCases.map((testcase)=>({
-			source_code:completeCode,
+			source_code:initialcode,
 			language_id:language_id,
 			stdin:testcase.input,
 			expected_output:testcase.output
@@ -324,22 +350,67 @@ const solvedproblembyuser=async(req,res)=>{
 		res.status(500).send(err.message);
 	}
 }
-const submittedproblem=async(req,res)=>{
-	try{
-		const userId=req.result._id;
-		const problemId=req.params.id;
-		const ans=await Submission.find({userId,problemId});
-		if(ans.length==0){
-			res.status(200).send("no submission");
-		}
-		res.status(200).send(ans);
+// const submittedproblem=async(req,res)=>{
+// 	try{
+// 		const userId=req.result._id;
+// 		const problemId=req.params.id;
+// 		const ans=await Submission.find({userId,problemId});
+// 		if(ans.length==0){
+// 			res.status(200).send("no submission");
+// 		}
+// 		res.status(200).send(ans);
 
-	}
-	catch(err){
-		res.status(500).send("internal server error");
+// 	}
+// 	catch(err){
+// 		res.status(500).send("internal server error");
 
-	}
-}
+// 	}
+// }
+const submittedproblem = async (req, res) => {
+  try {
+    const userId = req.result._id;
+    const problemId = req.params.id;
+    const { code, language } = req.body; // code user submitted
+
+    // Fetch problem
+    const problemData = await problem.findById(problemId);
+    if (!problemData) return res.status(404).json({ message: "Problem not found" });
+
+    const testCases = [
+      ...problemData.visibleTestCases, 
+      ...problemData.hiddenTestCases
+    ];
+
+    const submissions = testCases.map(tc => ({
+      source_code: code,
+      language_id: getLanguageId(language),
+      stdin: tc.input,
+      expected_output: tc.output
+    }));
+
+    const submitResult = await submitBatch(submissions);
+    const tokens = submitResult.map(v => v.token);
+    const results = await submitToken(tokens);
+
+    // Save submission
+    const submissionRecord = await Submission.create({
+      userId,
+      problemId,
+      code,
+      language,
+      results
+    });
+
+    return res.status(200).json({ 
+      message: "Submission evaluated", 
+      submission: submissionRecord 
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 
 
 

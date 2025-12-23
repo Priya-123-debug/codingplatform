@@ -39,7 +39,7 @@ const userSchema=new Schema({
 				ref:"problem"
 			}
 		],
-		unique:true,
+		// unique:true,
 		default:[],
 	},
 	password:{

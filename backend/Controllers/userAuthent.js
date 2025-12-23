@@ -61,7 +61,10 @@ const login = async (req, res) => {
       throw new Error("emailid or password is missing");
     }
     const user = await User.findOne({ emailid });
-    // const match = await becrpty.compare(password, user.password);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+ 
 		const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
