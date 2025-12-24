@@ -13,10 +13,6 @@ const Adminlayout = () => {
     <div className="min-h-screen flex flex-col bg-[#1A1A1B] text-white">
       {/* Navbar */}
       <Navbar />
-      
-
-
-
 
       {/* Sidebar + Content wrapper */}
       <div className="flex flex-1 border-t border-gray-700">

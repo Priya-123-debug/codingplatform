@@ -1,52 +1,43 @@
+const axios = require("axios");
 
-
-
-
-
-const axios = require('axios');
-
-const waiting=async(timer)=>{
-  setTimeout(()=>{
+const waiting = async (timer) => {
+  setTimeout(() => {
     return 1;
-  },timer);
-}
-
+  }, timer);
+};
 
 const getLanguageId = (lang) => {
   const language = {
     "c++": 54,
-    "cpp": 54,
-    "python": 71,
-    "python3": 71,
-    "java": 62,
-    "javascript": 63,
-    "js": 63,
-    "c": 50,
+    cpp: 54,
+    python: 71,
+    python3: 71,
+    java: 62,
+    javascript: 63,
+    js: 63,
+    c: 50,
     "c#": 51,
-    "go": 60,
-    "rust": 73,
-    "ruby": 72,
-    "swift": 83,
-    "kotlin": 78,
-    "scala": 81,
-    "php": 68,
-    "typescript": 74,
-    "r": 80
+    go: 60,
+    rust: 73,
+    ruby: 72,
+    swift: 83,
+    kotlin: 78,
+    scala: 81,
+    php: 68,
+    typescript: 74,
+    r: 80,
   };
   return language[lang.toLowerCase()] || 54;
 };
-
-
-
 
 // const submitBatch = async (submissions, useBase64 = true) => {
 //   const options = {
 //       method: 'POST',
 //       url: `https://judge0-ce.p.rapidapi.com/submissions/batch?&wait=false`,
 //        params: {
-     
+
 //       base64_encoded: 'false',
-      
+
 //     },
 //       headers: {
 //         'content-type': 'application/json',
@@ -61,20 +52,12 @@ const getLanguageId = (lang) => {
 //     console.log(" Response from Judge0 (token batch):", response.data);
 //     return response.data;
 
-  
-    
-    
-   
 //   } catch (err) {
 //     console.error(" Error in submitBatch:", err.response?.data || err.message);
 //     throw err;
 //   }
-  
 
 //   }
-  
-
-
 
 // const submitToken = async (tokens) => {
 //   const options = {
@@ -109,8 +92,6 @@ const getLanguageId = (lang) => {
 //     }
 //   }
 // };
-
-
 
 // Fetch results for multiple tokens
 // const submitToken = async (tokens) => {
@@ -200,7 +181,8 @@ const submitToken = async (tokens) => {
   }
 };
 
-
-module.exports={
-  getLanguageId,submitBatch,submitToken
-}
+module.exports = {
+  getLanguageId,
+  submitBatch,
+  submitToken,
+};

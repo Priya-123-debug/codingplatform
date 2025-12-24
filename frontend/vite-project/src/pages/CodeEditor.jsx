@@ -97,7 +97,6 @@ public class Main {
       setVerdict(res.data.verdict);
       setTestResult(res.data.results);
       setOutput(res.data.verdict);
-
     } catch (err) {
       console.error(err);
       setOutput(err.response?.data || "Error running code");
@@ -131,9 +130,15 @@ public class Main {
         <ul className="space-y-2">
           {problem.visibleTestCases.map((test, i) => (
             <li key={i} className="bg-gray-700 p-2 rounded">
-              <p><b>Input:</b> {test.input}</p>
-              <p><b>Output:</b> {test.output}</p>
-              <p><b>Explanation:</b> {test.explanation}</p>
+              <p>
+                <b>Input:</b> {test.input}
+              </p>
+              <p>
+                <b>Output:</b> {test.output}
+              </p>
+              <p>
+                <b>Explanation:</b> {test.explanation}
+              </p>
             </li>
           ))}
         </ul>
@@ -208,9 +213,7 @@ public class Main {
               Testcase {t.testcase}:{" "}
               <span
                 className={
-                  t.status === "Accepted"
-                    ? "text-green-400"
-                    : "text-red-400"
+                  t.status === "Accepted" ? "text-green-400" : "text-red-400"
                 }
               >
                 {t.status}

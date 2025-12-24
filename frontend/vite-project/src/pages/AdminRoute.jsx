@@ -1,10 +1,10 @@
 import react from "react";
-import {useSelector} from "react-redux";
-import {Navigate} from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 const AdminRoute = ({ children }) => {
   const { user, isAuthenticated, loading } = useSelector((state) => state.auth);
-	console.log("AdminRoute debug gg:", { user, isAuthenticated, loading }); // <-- Add this
+  console.log("AdminRoute debug gg:", { user, isAuthenticated, loading }); // <-- Add this
 
   if (loading) {
     return (
@@ -14,12 +14,12 @@ const AdminRoute = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated || user?.role?.toLowerCase()  !== "admin") {
-		console.log("Redirecting, not admin or not authenticated");
+  if (!isAuthenticated || user?.role?.toLowerCase() !== "admin") {
+    console.log("Redirecting, not admin or not authenticated");
     return <Navigate to="/" replace />;
   }
 
   return children;
 };
 
-export default AdminRoute
+export default AdminRoute;

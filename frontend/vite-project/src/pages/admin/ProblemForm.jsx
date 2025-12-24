@@ -15,10 +15,6 @@
 //   //   if (storedToken) setToken(storedToken);
 //   // }, []);
 
-
-
-		
-
 //   const [formData, setFormData] = useState({
 //     title: "",
 //     description: "",
@@ -128,7 +124,6 @@
 //     alert(err.response?.data?.message || "Error saving problem");
 //   }
 // };
-
 
 //   return (
 //     <div className="p-6 bg-gray-900 text-white rounded-lg max-w-5xl mx-auto">
@@ -315,8 +310,6 @@
 
 // export default ProblemForm;
 
-
-
 // pages/admin/ProblemForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -391,7 +384,7 @@ const ProblemForm = () => {
 
   // Submit
   const handleSubmit = async (e) => {
-     console.log("Data being sent to backend:", formData);
+    console.log("Data being sent to backend:", formData);
     e.preventDefault();
     try {
       await axiosClient.post("/problem/create", formData);
@@ -442,20 +435,27 @@ const ProblemForm = () => {
 
         {/* Tags */}
         <div className="mb-4 flex flex-wrap gap-2">
-          {["array", "string", "dp", "tree", "graph", "math", "greedy", "backtracking"].map(
-            (tag) => (
-              <button
-                type="button"
-                key={tag}
-                onClick={() => handleTagChange(tag)}
-                className={`px-2 py-1 rounded ${
-                  formData.tags.includes(tag) ? "bg-blue-500" : "bg-gray-600"
-                }`}
-              >
-                {tag}
-              </button>
-            )
-          )}
+          {[
+            "array",
+            "string",
+            "dp",
+            "tree",
+            "graph",
+            "math",
+            "greedy",
+            "backtracking",
+          ].map((tag) => (
+            <button
+              type="button"
+              key={tag}
+              onClick={() => handleTagChange(tag)}
+              className={`px-2 py-1 rounded ${
+                formData.tags.includes(tag) ? "bg-blue-500" : "bg-gray-600"
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
         </div>
 
         {/* Visible Test Cases */}
@@ -465,26 +465,36 @@ const ProblemForm = () => {
             <input
               placeholder="Input"
               value={tc.input}
-              onChange={(e) => updateVisibleTestCase(i, "input", e.target.value)}
+              onChange={(e) =>
+                updateVisibleTestCase(i, "input", e.target.value)
+              }
               className="w-full mb-1 p-1 rounded bg-gray-700"
               required
             />
             <input
               placeholder="Output"
               value={tc.output}
-              onChange={(e) => updateVisibleTestCase(i, "output", e.target.value)}
+              onChange={(e) =>
+                updateVisibleTestCase(i, "output", e.target.value)
+              }
               className="w-full mb-1 p-1 rounded bg-gray-700"
               required
             />
             <input
               placeholder="Explanation"
               value={tc.explanation}
-              onChange={(e) => updateVisibleTestCase(i, "explanation", e.target.value)}
+              onChange={(e) =>
+                updateVisibleTestCase(i, "explanation", e.target.value)
+              }
               className="w-full mb-1 p-1 rounded bg-gray-700"
             />
           </div>
         ))}
-        <button type="button" onClick={addVisibleTestCase} className="mb-4 px-4 py-2 bg-green-500 rounded">
+        <button
+          type="button"
+          onClick={addVisibleTestCase}
+          className="mb-4 px-4 py-2 bg-green-500 rounded"
+        >
           Add Visible Test Case
         </button>
 
@@ -502,13 +512,19 @@ const ProblemForm = () => {
             <input
               placeholder="Output"
               value={tc.output}
-              onChange={(e) => updateHiddenTestCase(i, "output", e.target.value)}
+              onChange={(e) =>
+                updateHiddenTestCase(i, "output", e.target.value)
+              }
               className="w-full mb-1 p-1 rounded bg-gray-700"
               required
             />
           </div>
         ))}
-        <button type="button" onClick={addHiddenTestCase} className="mb-4 px-4 py-2 bg-green-500 rounded">
+        <button
+          type="button"
+          onClick={addHiddenTestCase}
+          className="mb-4 px-4 py-2 bg-green-500 rounded"
+        >
           Add Hidden Test Case
         </button>
 
@@ -519,21 +535,29 @@ const ProblemForm = () => {
             <input
               placeholder="Language"
               value={sc.language}
-              onChange={(e) => updateCode("startcode", i, "language", e.target.value)}
+              onChange={(e) =>
+                updateCode("startcode", i, "language", e.target.value)
+              }
               className="mr-2 mb-1 p-1 rounded bg-gray-700"
               required
             />
             <textarea
               placeholder="Initial Code"
               value={sc.initialcode}
-              onChange={(e) => updateCode("startcode", i, "initialcode", e.target.value)}
+              onChange={(e) =>
+                updateCode("startcode", i, "initialcode", e.target.value)
+              }
               className="w-full mb-1 p-1 rounded bg-gray-700"
               rows={3}
               required
             />
           </div>
         ))}
-        <button type="button" onClick={() => addCode("startcode")} className="mb-4 px-3 py-1 bg-green-500 rounded">
+        <button
+          type="button"
+          onClick={() => addCode("startcode")}
+          className="mb-4 px-3 py-1 bg-green-500 rounded"
+        >
           Add Start Code
         </button>
 
@@ -544,21 +568,34 @@ const ProblemForm = () => {
             <input
               placeholder="Language"
               value={rs.language}
-              onChange={(e) => updateCode("referencesolution", i, "language", e.target.value)}
+              onChange={(e) =>
+                updateCode("referencesolution", i, "language", e.target.value)
+              }
               className="mr-2 mb-1 p-1 rounded bg-gray-700"
               required
             />
             <textarea
               placeholder="Reference Code"
               value={rs.initialcode}
-              onChange={(e) => updateCode("referencesolution", i, "initialcode", e.target.value)}
+              onChange={(e) =>
+                updateCode(
+                  "referencesolution",
+                  i,
+                  "initialcode",
+                  e.target.value
+                )
+              }
               className="w-full mb-1 p-1 rounded bg-gray-700"
               rows={3}
               required
             />
           </div>
         ))}
-        <button type="button" onClick={() => addCode("referencesolution")} className="mb-4 px-3 py-1 bg-green-500 rounded">
+        <button
+          type="button"
+          onClick={() => addCode("referencesolution")}
+          className="mb-4 px-3 py-1 bg-green-500 rounded"
+        >
           Add Reference Solution
         </button>
 
@@ -571,4 +608,3 @@ const ProblemForm = () => {
 };
 
 export default ProblemForm;
-

@@ -31,8 +31,11 @@ const EditProblem = () => {
           // startCode: data?.hiddenTestCases?.startcode || "",
           // referenceSolution: data?.hiddenTestCases?.referencesolution || "",
 
-					 startCode: data?.hiddenTestCases?.[0]?.startcode?.[0]?.initialcode || "",
-  referenceSolution: data?.hiddenTestCases?.[0]?.referencesolution?.[0]?.initialcode || "",
+          startCode:
+            data?.hiddenTestCases?.[0]?.startcode?.[0]?.initialcode || "",
+          referenceSolution:
+            data?.hiddenTestCases?.[0]?.referencesolution?.[0]?.initialcode ||
+            "",
           visibleTests: data?.visibleTestCases?.length
             ? data.visibleTestCases
             : [{ input: "", output: "", explanation: "" }],
@@ -105,7 +108,9 @@ const EditProblem = () => {
 
         {/* Description */}
         <div>
-          <label className="block text-gray-400 mb-1">Problem Description</label>
+          <label className="block text-gray-400 mb-1">
+            Problem Description
+          </label>
           <textarea
             name="description"
             value={formData.description}
@@ -171,7 +176,12 @@ const EditProblem = () => {
               <textarea
                 value={test.input}
                 onChange={(e) =>
-                  handleTestChange("visibleTests", index, "input", e.target.value)
+                  handleTestChange(
+                    "visibleTests",
+                    index,
+                    "input",
+                    e.target.value
+                  )
                 }
                 rows="2"
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
@@ -183,7 +193,12 @@ const EditProblem = () => {
               <textarea
                 value={test.output}
                 onChange={(e) =>
-                  handleTestChange("visibleTests", index, "output", e.target.value)
+                  handleTestChange(
+                    "visibleTests",
+                    index,
+                    "output",
+                    e.target.value
+                  )
                 }
                 rows="2"
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
@@ -195,7 +210,12 @@ const EditProblem = () => {
               <textarea
                 value={test.explanation || ""}
                 onChange={(e) =>
-                  handleTestChange("visibleTests", index, "explanation", e.target.value)
+                  handleTestChange(
+                    "visibleTests",
+                    index,
+                    "explanation",
+                    e.target.value
+                  )
                 }
                 rows="2"
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
@@ -235,7 +255,12 @@ const EditProblem = () => {
               <textarea
                 value={test.input}
                 onChange={(e) =>
-                  handleTestChange("hiddenTests", index, "input", e.target.value)
+                  handleTestChange(
+                    "hiddenTests",
+                    index,
+                    "input",
+                    e.target.value
+                  )
                 }
                 rows="2"
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
@@ -247,7 +272,12 @@ const EditProblem = () => {
               <textarea
                 value={test.output}
                 onChange={(e) =>
-                  handleTestChange("hiddenTests", index, "output", e.target.value)
+                  handleTestChange(
+                    "hiddenTests",
+                    index,
+                    "output",
+                    e.target.value
+                  )
                 }
                 rows="2"
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
@@ -259,7 +289,12 @@ const EditProblem = () => {
               <textarea
                 value={test.explanation || ""}
                 onChange={(e) =>
-                  handleTestChange("hiddenTests", index, "explanation", e.target.value)
+                  handleTestChange(
+                    "hiddenTests",
+                    index,
+                    "explanation",
+                    e.target.value
+                  )
                 }
                 rows="2"
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"

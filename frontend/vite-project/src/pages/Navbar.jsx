@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { logoutUser } from "../store/authSlice";
 
-const Navbar = ({ filter, setfilter,isUser }) => {
+const Navbar = ({ filter, setfilter, isUser }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
@@ -22,10 +22,9 @@ const Navbar = ({ filter, setfilter,isUser }) => {
         </div>
         <div className="dropdown dropdown-end">
           <div tabIndex={0} className="btn btn-ghost">
-           <div tabIndex={0} className="btn btn-ghost">
-  {user?.firstname || user?.email || 'User'}
-</div>
-
+            <div tabIndex={0} className="btn btn-ghost">
+              {user?.firstname || user?.email || "User"}
+            </div>
           </div>
           <ul
             tabIndex={0}
@@ -41,7 +40,7 @@ const Navbar = ({ filter, setfilter,isUser }) => {
       </nav>
 
       {/* Render filter only for users, not admins */}
-      {isUser&&user?.role !== "admin" && filter && setfilter && (
+      {isUser && user?.role !== "admin" && filter && setfilter && (
         <div className="flex gap-4 mb-4 pt-4 px-4 bg-base-100 shadow">
           <select
             className="select select-bordered"
@@ -55,7 +54,9 @@ const Navbar = ({ filter, setfilter,isUser }) => {
           <select
             className="select select-bordered"
             value={filter.difficulty}
-            onChange={(e) => setfilter({ ...filter, difficulty: e.target.value })}
+            onChange={(e) =>
+              setfilter({ ...filter, difficulty: e.target.value })
+            }
           >
             <option value="all">All Difficulties</option>
             <option value="easy">Easy</option>

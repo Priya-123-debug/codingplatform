@@ -1,15 +1,10 @@
-
-
-
 const problem = require("../models/problem");
 const Submission = require("../models/submission");
 const {
   getLanguageId,
   submitBatch,
   submitToken,
- 
 } = require("../utilis/Problemutility");
-
 
 const submitcode = async (req, res) => {
   try {
@@ -37,8 +32,7 @@ const submitcode = async (req, res) => {
 
     const languageid = getLanguageId(language);
 
-    const encode = (str) =>
-      Buffer.from(str || "", "utf-8").toString("base64");
+    const encode = (str) => Buffer.from(str || "", "utf-8").toString("base64");
 
     const submissions = problemindatabase.hiddenTestCases.map((testcase) => ({
       source_code: encode(code),
@@ -76,7 +70,10 @@ const submitcode = async (req, res) => {
     submission.errormessage = error;
     await submission.save();
 
-    if (status === "Accepted" && !req.result.problemsolved.includes(problemid)) {
+    if (
+      status === "Accepted" &&
+      !req.result.problemsolved.includes(problemid)
+    ) {
       req.result.problemsolved.push(problemid);
       await req.result.save();
     }
@@ -87,7 +84,6 @@ const submitcode = async (req, res) => {
     res.status(500).send("Internal server error");
   }
 };
-
 
 // const runcode = async (req, res) => {
 //   try {
@@ -129,8 +125,6 @@ const submitcode = async (req, res) => {
 // };
 
 const runcode = async (req, res) => {
- 
-
   try {
     const userid = req.result._id;
     const problemid = req.params.id;
@@ -147,8 +141,7 @@ const runcode = async (req, res) => {
 
     const languageid = getLanguageId(language);
 
-    const encode = (str) =>
-      Buffer.from(str || "", "utf-8").toString("base64");
+    const encode = (str) => Buffer.from(str || "", "utf-8").toString("base64");
 
     const submissions = problemindatabase.visibleTestCases.map((testcase) => ({
       source_code: encode(code),
@@ -161,12 +154,15 @@ const runcode = async (req, res) => {
     const tokens = submitresult.map((r) => r.token);
 
     const results = await submitToken(tokens);
-     results.forEach((r, i) => {
-  console.log(`Testcase ${i + 1}`);
-  console.log("Status:", r.status?.description);
-  console.log("Stdout:", JSON.stringify(r.stdout));
-  console.log("Expected:", JSON.stringify(problemindatabase.visibleTestCases[i].output));
-});
+    results.forEach((r, i) => {
+      console.log(`Testcase ${i + 1}`);
+      console.log("Status:", r.status?.description);
+      console.log("Stdout:", JSON.stringify(r.stdout));
+      console.log(
+        "Expected:",
+        JSON.stringify(problemindatabase.visibleTestCases[i].output)
+      );
+    });
 
     // ✅ VERDICT LOGIC
     let allPassed = true;
@@ -186,14 +182,10 @@ const runcode = async (req, res) => {
       verdict: allPassed ? "Accepted" : "Not Accepted",
       results: formattedResults,
     });
-
   } catch (err) {
     console.error("❌ Run Code Error:", err.response?.data || err.message);
     res.status(500).send("Internal server error");
   }
 };
-
-
-
 
 module.exports = { submitcode, runcode };

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Schema=mongoose.Schema;
+const Schema = mongoose.Schema;
 async function main() {
   await mongoose.connect(process.env.DB_URL);
 }
