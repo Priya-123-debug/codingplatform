@@ -21,7 +21,7 @@ const Login = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [justLoggedIn, setJustLoggedIn] = useState(false);
 	const { isAuthenticated, loading, error, user } = useSelector((state) => state.auth);
-	console.log("Auth state:", { user, isAuthenticated, loading });
+	// console.log("Auth state:", { user, isAuthenticated, loading });
 
 	const {
 		register,
@@ -30,13 +30,13 @@ const Login = () => {
 		formState: { errors },
 	} = useForm({ resolver: zodResolver(signupSchema) });
 	useEffect(() => {
-		console.log("useEffect fired", { isAuthenticated, user });
+		// console.log("useEffect fired", { isAuthenticated, user });
 		// if(isAuthenticated){
 		// 	navigate('/');
 		// }
 
 		if (isAuthenticated && user) {
-			console.log(user)
+			// console.log(user)
 			if (user?.role === "admin") {
 				navigate("/admin"); // redirect admin to admin panel
 			} else {

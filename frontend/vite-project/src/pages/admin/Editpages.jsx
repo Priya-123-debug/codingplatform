@@ -22,7 +22,7 @@ const EditProblem = () => {
       try {
         const res = await axiosClient.get(`/problem/problembyid/${id}`);
         const data = res.data;
-        console.log("Fetched problem:", data);
+        // console.log("Fetched problem:", data);
 
         setFormData({
           title: data?.title || "",
@@ -32,9 +32,9 @@ const EditProblem = () => {
           // referenceSolution: data?.hiddenTestCases?.referencesolution || "",
 
           startCode:
-            data?.hiddenTestCases?.[0]?.startcode?.[0]?.initialcode || "",
+            data?.startcode?.[0]?.initialcode || "",
           referenceSolution:
-            data?.hiddenTestCases?.[0]?.referencesolution?.[0]?.initialcode ||
+            data?.referencesolution?.[0]?.initialcode ||
             "",
           visibleTests: data?.visibleTestCases?.length
             ? data.visibleTestCases
@@ -43,6 +43,8 @@ const EditProblem = () => {
             ? data.hiddenTestCases
             : [{ input: "", output: "", explanation: "" }],
         });
+
+        // console.log("Form data set to:", formData);
       } catch (err) {
         console.log("Error fetching problem:", err);
       }

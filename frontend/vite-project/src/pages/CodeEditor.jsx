@@ -114,13 +114,15 @@ public class Main {
     return <div className="text-red-500 p-6">Problem not found</div>;
   }
 
+  // console.log("Problem Data:", problem);
+
   /* ---------------- UI ---------------- */
   return (
     <div className="grid grid-cols-12 h-screen overflow-hidden">
       {/* Left Panel */}
       <div className="col-span-4 bg-gray-800 p-4 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-2">{problem.title}</h2>
-        <p className="text-gray-300 mb-4">{problem.description}</p>
+        <p className="text-gray-300 whitespace-pre-line mb-4">{problem.description}</p>
 
         <p className="text-sm text-yellow-400 mb-4">
           Difficulty: {problem.difficulty}

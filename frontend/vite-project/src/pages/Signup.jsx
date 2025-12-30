@@ -32,7 +32,7 @@ const Signup = () => {
   } = useForm({ resolver: zodResolver(signupSchema) });
 
   const submitteddata = (data) => {
-    console.log(data);
+    // console.log(data);
   };
   useEffect(() => {
     if (isAuthenticated) {

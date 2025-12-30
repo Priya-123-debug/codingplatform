@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 
 const AdminRoute = ({ children }) => {
   const { user, isAuthenticated, loading } = useSelector((state) => state.auth);
-  console.log("AdminRoute debug gg:", { user, isAuthenticated, loading }); // <-- Add this
+  // console.log("AdminRoute debug gg:", { user, isAuthenticated, loading }); // <-- Add this
 
   if (loading) {
     return (
@@ -15,7 +15,7 @@ const AdminRoute = ({ children }) => {
   }
 
   if (!isAuthenticated || user?.role?.toLowerCase() !== "admin") {
-    console.log("Redirecting, not admin or not authenticated");
+    // console.log("Redirecting, not admin or not authenticated");
     return <Navigate to="/" replace />;
   }
 

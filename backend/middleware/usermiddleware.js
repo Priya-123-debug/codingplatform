@@ -20,8 +20,8 @@ const usermiddleware = async (req, res, next) => {
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_KEY);
-    console.log("Token received:", token);
-    console.log("Decoded token:", decoded);
+    // console.log("Token received:", token);
+    // console.log("Decoded token:", decoded);
 
     const result = await User.findById(decoded._id);
 

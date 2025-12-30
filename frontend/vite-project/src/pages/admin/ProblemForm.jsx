@@ -384,7 +384,7 @@ const ProblemForm = () => {
 
   // Submit
   const handleSubmit = async (e) => {
-    console.log("Data being sent to backend:", formData);
+    // console.log("Data being sent to backend:", formData);
     e.preventDefault();
     try {
       await axiosClient.post("/problem/create", formData);

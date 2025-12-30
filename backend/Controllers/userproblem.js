@@ -140,17 +140,17 @@ const {
 // };
 
 const createproblem = async (req, res) => {
-  console.log("Frontend sent this data:", req.body);
-  console.log(
-    "STARTCODE:",
-    req.body.startcode,
-    Array.isArray(req.body.startcode)
-  );
-  console.log(
-    "REFERENCESOLUTION:",
-    req.body.referencesolution,
-    Array.isArray(req.body.referencesolution)
-  );
+  // console.log("Frontend sent this data:", req.body);
+  // console.log(
+  //   "STARTCODE:",
+  //   req.body.startcode,
+  //   Array.isArray(req.body.startcode)
+  // );
+  // console.log(
+  //   "REFERENCESOLUTION:",
+  //   req.body.referencesolution,
+  //   Array.isArray(req.body.referencesolution)
+  // );
 
   try {
     const userProblem = await problem.create({
@@ -170,7 +170,7 @@ const createproblem = async (req, res) => {
 
 const updateproblem = async (req, res) => {
   const { id } = req.params;
-  console.log("request body", req.body);
+  // console.log("request body", req.body);
   //  const {title,description,difficulty,tags,visibletestcases,hiddentestcases,startcode,referencesolution}=req.body;
   const {
     title,
@@ -273,7 +273,7 @@ const deleteproblem = async (req, res) => {
 };
 
 const getproblembyid = async (req, res) => {
-  console.log("frotend req is comming", req.params);
+  // console.log("frotend req is comming", req.params);
   const { id } = req.params;
   try {
     if (!id) {
@@ -290,7 +290,7 @@ const getproblembyid = async (req, res) => {
     if (!getproblem) {
       return res.status(404).send("problem is missing");
     }
-    console.log("req from frontend to edit page:", getproblem);
+    // console.log("req from frontend to edit page:", getproblem);
     return res.status(200).json(getproblem);
   } catch (err) {
     res.status(500).send(err.message);

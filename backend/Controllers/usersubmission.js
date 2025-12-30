@@ -155,13 +155,13 @@ const runcode = async (req, res) => {
 
     const results = await submitToken(tokens);
     results.forEach((r, i) => {
-      console.log(`Testcase ${i + 1}`);
-      console.log("Status:", r.status?.description);
-      console.log("Stdout:", JSON.stringify(r.stdout));
-      console.log(
-        "Expected:",
-        JSON.stringify(problemindatabase.visibleTestCases[i].output)
-      );
+      // console.log(`Testcase ${i + 1}`);
+      // console.log("Status:", r.status?.description);
+      // console.log("Stdout:", JSON.stringify(r.stdout));
+      // console.log(
+      //   "Expected:",
+      //   JSON.stringify(problemindatabase.visibleTestCases[i].output)
+      // );
     });
 
     // ✅ VERDICT LOGIC
