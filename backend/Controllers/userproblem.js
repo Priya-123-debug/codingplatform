@@ -170,7 +170,7 @@ const createproblem = async (req, res) => {
 
 const updateproblem = async (req, res) => {
   const { id } = req.params;
-  console.log("request body", req.body);
+  // console.log("request body", req.body);
   //  const {title,description,difficulty,tags,visibletestcases,hiddentestcases,startcode,referencesolution}=req.body;
   const {
     title,

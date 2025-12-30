@@ -144,6 +144,7 @@ const runcode = async (req, res) => {
     const encode = (str) => Buffer.from(str || "", "utf-8").toString("base64");
 
     const submissions = problemindatabase.visibleTestCases.map((testcase) => ({
+      // Encode fields because Judge0 is called with base64_encoded=true
       source_code: encode(code),
       language_id: languageid,
       stdin: encode(testcase.input),
@@ -170,9 +171,13 @@ const runcode = async (req, res) => {
     const formattedResults = results.map((r, index) => {
       if (r.status.id !== 3) allPassed = false;
 
+      const tc = problemindatabase.visibleTestCases?.[index] || {};
+
       return {
         testcase: index + 1,
         status: r.status.description,
+        input: tc.input ?? null,
+        expected_output: tc.output ?? null,
         output: r.stdout,
         error: r.stderr || r.compile_output || null,
       };

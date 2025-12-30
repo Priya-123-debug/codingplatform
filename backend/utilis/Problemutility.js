@@ -133,8 +133,10 @@ const submitBatch = async (submissions) => {
   // Encode each initialcode in base64
   const encodedSubmissions = submissions.map((s) => ({
     ...s,
-    source_code: encodeBase64(s.source_code),
+    source_code: s.source_code,
   }));
+
+  // console.log("Encoded Submissions:", encodedSubmissions);
 
   try {
     const response = await axios.post(

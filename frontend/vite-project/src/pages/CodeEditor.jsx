@@ -94,11 +94,14 @@ public class Main {
       setOutput("Running...");
       setVerdict("");
       setTestResult([]);
+      // console.log("Submitting code:", { language, code });
 
       const res = await axiosClient.post(`/submission/run/${id}`, {
         language,
         code,
       });
+
+      console.log("Run Code Response:", res.data);
 
       // ✅ BACKEND RESPONSE
       setVerdict(res.data.verdict);
@@ -245,12 +248,12 @@ public class Main {
               <span className="text-gray-200">Output</span>
               <span
                 className={`px-2 py-1 rounded text-xs font-semibold ${isRunning
-                    ? "bg-yellow-500/20 text-yellow-300"
-                    : verdict === "Accepted"
-                      ? "bg-green-500/20 text-green-300"
-                      : verdict
-                        ? "bg-red-500/20 text-red-300"
-                        : "bg-gray-600 text-gray-200"
+                  ? "bg-yellow-500/20 text-yellow-300"
+                  : verdict === "Accepted"
+                    ? "bg-green-500/20 text-green-300"
+                    : verdict
+                      ? "bg-red-500/20 text-red-300"
+                      : "bg-gray-600 text-gray-200"
                   }`}
               >
                 {isRunning ? "Running" : verdict || "Ready"}
@@ -285,11 +288,6 @@ public class Main {
           </div>
 
           <div className="overflow-auto max-h-72 space-y-3 px-3 py-2 flex-1 min-h-0">
-            {/* Console output */}
-            <div className="bg-gray-900/70 rounded p-2 text-sm font-mono text-green-300 whitespace-pre-wrap min-h-[56px]">
-              {isRunning ? "Running..." : output || verdict || "No output yet"}
-            </div>
-
             {/* Selected testcase details */}
             <div>
               <div className="text-xs uppercase tracking-wide text-gray-400 mb-2">Testcase</div>
