@@ -170,7 +170,7 @@ const createproblem = async (req, res) => {
 
 const updateproblem = async (req, res) => {
   const { id } = req.params;
-  // console.log("request body", req.body);
+  console.log("request body", req.body);
   //  const {title,description,difficulty,tags,visibletestcases,hiddentestcases,startcode,referencesolution}=req.body;
   const {
     title,
@@ -192,56 +192,56 @@ const updateproblem = async (req, res) => {
     if (!dsaproblem) {
       return res.status(404).send("problem not found");
     }
-    const refs = Array.isArray(referencesolution) ? referencesolution : [];
-    for (const { language, initialcode } of refs) {
-      // source code
-      // language_id
-      // stdin
-      // expected_output
-      const language_id = getLanguageId(language);
+    // const refs = Array.isArray(referencesolution) ? referencesolution : [];
+    // for (const { language, initialcode } of refs) {
+    //   // source code
+    //   // language_id
+    //   // stdin
+    //   // expected_output
+    //   const language_id = getLanguageId(language);
 
-      // i am creating batch submission
-      const submissions = visibleTestCases.map((testcase) => ({
-        source_code: initialcode,
-        language_id: language_id,
-        stdin: testcase.input,
-        expected_output: testcase.output,
-      }));
-      const submitresult = await submitBatch(submissions);
-      // console.log(submitresult);
+    //   // i am creating batch submission
+    //   const submissions = visibleTestCases.map((testcase) => ({
+    //     source_code: initialcode,
+    //     language_id: language_id,
+    //     stdin: testcase.input,
+    //     expected_output: testcase.output,
+    //   }));
+    //   const submitresult = await submitBatch(submissions);
+    //   // console.log(submitresult);
 
-      const resulttoken = submitresult.map((value) => value.token);
-      // console.log(resulttoken);
-      const testresult = await submitToken(resulttoken);
-      // console.log(testresult);
-      for (const test of testresult) {
-        if (test.status_id !== 3) {
-          res.status(400).json({
-            message: "reference solution is not passing all the test cases",
-          });
-        } else if (test.status_id == 5) {
-          res.status(400).json({
-            message: "time limit exceded",
-          });
-        } else if (test.status_id == 6) {
-          res.status(400).json({
-            message: "compilation error",
-          });
-        } else if (test.status_id == 9) {
-          res.status(400).json({
-            message: "Runtime error",
-          });
-        } else if (test.status_id == 3) {
-          res.status(400).json({
-            message: "Accepted",
-          });
-        } else if (test.status_id == 4) {
-          res.status(400).json({
-            message: "wrong answer",
-          });
-        }
-      }
-    }
+    //   const resulttoken = submitresult.map((value) => value.token);
+    //   // console.log(resulttoken);
+    //   const testresult = await submitToken(resulttoken);
+    //   // console.log(testresult);
+    //   for (const test of testresult) {
+    //     if (test.status_id !== 3) {
+    //       res.status(400).json({
+    //         message: "reference solution is not passing all the test cases",
+    //       });
+    //     } else if (test.status_id == 5) {
+    //       res.status(400).json({
+    //         message: "time limit exceded",
+    //       });
+    //     } else if (test.status_id == 6) {
+    //       res.status(400).json({
+    //         message: "compilation error",
+    //       });
+    //     } else if (test.status_id == 9) {
+    //       res.status(400).json({
+    //         message: "Runtime error",
+    //       });
+    //     } else if (test.status_id == 3) {
+    //       res.status(400).json({
+    //         message: "Accepted",
+    //       });
+    //     } else if (test.status_id == 4) {
+    //       res.status(400).json({
+    //         message: "wrong answer",
+    //       });
+    //     }
+    //   }
+    // }
     const newproblem = await problem.findByIdAndUpdate(
       id,
       { ...req.body },

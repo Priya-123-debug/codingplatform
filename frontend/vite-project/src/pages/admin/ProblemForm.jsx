@@ -325,8 +325,8 @@ const ProblemForm = () => {
     tags: [],
     visibleTestCases: [{ input: "", output: "", explanation: "" }],
     hiddenTestCases: [{ input: "", output: "" }],
-    startcode: [{ language: "cpp", initialcode: "" }],
-    referencesolution: [{ language: "cpp", initialcode: "" }],
+    startcode: [{ language: "", initialcode: "" }],
+    referencesolution: [{ language: "", initialcode: "" }],
   });
 
   // Basic input change
@@ -356,6 +356,10 @@ const ProblemForm = () => {
     newCases[index][key] = value;
     setFormData({ ...formData, visibleTestCases: newCases });
   };
+  const removeVisibleTestCase = (index) => {
+    const newCases = formData.visibleTestCases.filter((_, i) => i !== index);
+    setFormData({ ...formData, visibleTestCases: newCases });
+  };
 
   // Hidden test cases
   const addHiddenTestCase = () =>
@@ -368,6 +372,10 @@ const ProblemForm = () => {
     newCases[index][key] = value;
     setFormData({ ...formData, hiddenTestCases: newCases });
   };
+  const removeHiddenTestCase = (index) => {
+    const newCases = formData.hiddenTestCases.filter((_, i) => i !== index);
+    setFormData({ ...formData, hiddenTestCases: newCases });
+  };
 
   // Startcode & Reference Solution
   const updateCode = (type, index, key, value) => {
@@ -378,8 +386,12 @@ const ProblemForm = () => {
   const addCode = (type) => {
     setFormData({
       ...formData,
-      [type]: [...formData[type], { language: "cpp", initialcode: "" }],
+      [type]: [...formData[type], { language: "", initialcode: "" }],
     });
+  };
+  const removeCode = (type, index) => {
+    const newArr = formData[type].filter((_, i) => i !== index);
+    setFormData({ ...formData, [type]: newArr });
   };
 
   // Submit
@@ -488,6 +500,15 @@ const ProblemForm = () => {
               }
               className="w-full mb-1 p-1 rounded bg-gray-700"
             />
+            {formData.visibleTestCases.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeVisibleTestCase(i)}
+                className="mt-1 text-red-400 hover:text-red-600 text-sm"
+              >
+                ❌ Remove
+              </button>
+            )}
           </div>
         ))}
         <button
@@ -518,6 +539,15 @@ const ProblemForm = () => {
               className="w-full mb-1 p-1 rounded bg-gray-700"
               required
             />
+            {formData.hiddenTestCases.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeHiddenTestCase(i)}
+                className="mt-1 text-red-400 hover:text-red-600 text-sm"
+              >
+                ❌ Remove
+              </button>
+            )}
           </div>
         ))}
         <button
@@ -531,26 +561,47 @@ const ProblemForm = () => {
         {/* Startcode */}
         <h3 className="text-xl mb-2">Start Code</h3>
         {formData.startcode.map((sc, i) => (
-          <div key={i} className="mb-2">
-            <input
-              placeholder="Language"
+          <div key={i} className="mb-2 p-2 bg-gray-800 rounded">
+            <label className="block text-gray-400 text-sm mb-1">
+              Language
+            </label>
+            <select
               value={sc.language}
               onChange={(e) =>
                 updateCode("startcode", i, "language", e.target.value)
               }
-              className="mr-2 mb-1 p-1 rounded bg-gray-700"
+              className="w-full mb-2 p-2 rounded bg-gray-700"
               required
-            />
+            >
+              <option value="">Select Language</option>
+              <option value="cpp">C++</option>
+              <option value="java">Java</option>
+              <option value="python">Python</option>
+              <option value="javascript">JavaScript</option>
+              <option value="c">C</option>
+            </select>
+            <label className="block text-gray-400 text-sm mb-1">
+              Initial Code
+            </label>
             <textarea
               placeholder="Initial Code"
               value={sc.initialcode}
               onChange={(e) =>
                 updateCode("startcode", i, "initialcode", e.target.value)
               }
-              className="w-full mb-1 p-1 rounded bg-gray-700"
-              rows={3}
+              className="w-full mb-1 p-1 rounded bg-gray-700 font-mono"
+              rows={5}
               required
             />
+            {formData.startcode.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeCode("startcode", i)}
+                className="mt-1 text-red-400 hover:text-red-600 text-sm"
+              >
+                ❌ Remove
+              </button>
+            )}
           </div>
         ))}
         <button
@@ -564,16 +615,28 @@ const ProblemForm = () => {
         {/* Reference Solution */}
         <h3 className="text-xl mb-2">Reference Solution</h3>
         {formData.referencesolution.map((rs, i) => (
-          <div key={i} className="mb-2">
-            <input
-              placeholder="Language"
+          <div key={i} className="mb-2 p-2 bg-gray-800 rounded">
+            <label className="block text-gray-400 text-sm mb-1">
+              Language
+            </label>
+            <select
               value={rs.language}
               onChange={(e) =>
                 updateCode("referencesolution", i, "language", e.target.value)
               }
-              className="mr-2 mb-1 p-1 rounded bg-gray-700"
+              className="w-full mb-2 p-2 rounded bg-gray-700"
               required
-            />
+            >
+              <option value="">Select Language</option>
+              <option value="cpp">C++</option>
+              <option value="java">Java</option>
+              <option value="python">Python</option>
+              <option value="javascript">JavaScript</option>
+              <option value="c">C</option>
+            </select>
+            <label className="block text-gray-400 text-sm mb-1">
+              Reference Code
+            </label>
             <textarea
               placeholder="Reference Code"
               value={rs.initialcode}
@@ -585,10 +648,19 @@ const ProblemForm = () => {
                   e.target.value
                 )
               }
-              className="w-full mb-1 p-1 rounded bg-gray-700"
-              rows={3}
+              className="w-full mb-1 p-1 rounded bg-gray-700 font-mono"
+              rows={5}
               required
             />
+            {formData.referencesolution.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeCode("referencesolution", i)}
+                className="mt-1 text-red-400 hover:text-red-600 text-sm"
+              >
+                ❌ Remove
+              </button>
+            )}
           </div>
         ))}
         <button

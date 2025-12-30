@@ -40,10 +40,17 @@ public class Main {
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
+  const [isTagsOpen, setIsTagsOpen] = useState(false);
+  const [selectedTestIndex, setSelectedTestIndex] = useState(0);
 
   // ✅ NEW STATES
   const [verdict, setVerdict] = useState("");
   const [testResult, setTestResult] = useState([]);
+
+  // Reset selected tab when new results arrive
+  useEffect(() => {
+    setSelectedTestIndex(0);
+  }, [testResult.length]);
 
   /* ---------------- Fetch Problem ---------------- */
   useEffect(() => {
@@ -118,15 +125,14 @@ public class Main {
 
   /* ---------------- UI ---------------- */
   return (
-    <div className="grid grid-cols-12 h-screen overflow-hidden">
+    <div className="grid grid-cols-12 h-screen overflow-hidden min-h-0">
       {/* Left Panel */}
-      <div className="col-span-4 bg-gray-800 p-4 overflow-y-auto">
+      <div className="col-span-4 bg-gray-800 p-4 overflow-y-auto h-screen min-h-0">
         <h2 className="text-2xl font-bold mb-2">{problem.title}</h2>
-        <p className="text-gray-300 whitespace-pre-line mb-4">{problem.description}</p>
-
         <p className="text-sm text-yellow-400 mb-4">
           Difficulty: {problem.difficulty}
         </p>
+        <p className="text-gray-300 whitespace-pre-line mb-4">{problem.description}</p>
 
         <h3 className="text-lg font-semibold mb-2">Example Test Cases</h3>
         <ul className="space-y-2">
@@ -144,14 +150,43 @@ public class Main {
             </li>
           ))}
         </ul>
+
+
+        {/* Tags Accordion */}
+        <div className="my-4">
+          <button
+            type="button"
+            onClick={() => setIsTagsOpen((prev) => !prev)}
+            className="w-full flex items-center justify-between bg-gray-700 px-3 py-2 rounded"
+          >
+            <span className="font-semibold">Tags ({problem.tags?.length || 0})</span>
+            <span>{isTagsOpen ? "▲" : "▼"}</span>
+          </button>
+
+          {isTagsOpen && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(problem.tags && problem.tags.length > 0
+                ? problem.tags
+                : ["No tags"]
+              ).map((tag, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-1 bg-gray-600 rounded text-sm text-white"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Right Panel */}
-      <div className="col-span-8 bg-gray-800 flex flex-col">
+      <div className="col-span-8 bg-gray-800 flex flex-col h-screen min-h-0">
         {/* Top Bar */}
         <div className="flex justify-between items-center p-2 border-b border-gray-700">
           <select
-            className="bg-gray-800 text-white p-2 rounded"
+            className="bg-gray-600 text-white p-2 rounded"
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
@@ -177,18 +212,17 @@ public class Main {
         {/* Verdict */}
         {verdict && (
           <div
-            className={`p-2 text-center font-bold ${
-              verdict === "Accepted"
-                ? "bg-green-600 text-white"
-                : "bg-red-600 text-white"
-            }`}
+            className={`p-2 text-center font-bold ${verdict === "Accepted"
+              ? "bg-green-600 text-white"
+              : "bg-red-600 text-white"
+              }`}
           >
             {verdict}
           </div>
         )}
 
         {/* Editor */}
-        <div className="flex-1">
+        <div className="flex-1 min-h-0">
           <Editor
             height="100%"
             theme="vs-dark"
@@ -203,29 +237,109 @@ public class Main {
           />
         </div>
 
-        {/* Output */}
-        <div className="h-40 bg-black text-green-400 p-2 overflow-auto">
-          {isRunning ? "Running..." : <pre>{output}</pre>}
-        </div>
-
-        {/* Testcase Results */}
-        {testResult.map((t, i) => (
-          <div key={i} className="text-white p-2 border-t border-gray-700">
-            <p>
-              Testcase {t.testcase}:{" "}
+        {/* Output + Testcase Results (LeetCode-like with tabs) */}
+        <div className="max-h-80 bg-[#0b0b0f] text-white border-t border-gray-700 flex flex-col min-h-0">
+          {/* Header */}
+          <div className="flex items-center justify-between px-3 py-2 border-b border-gray-700">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <span className="text-gray-200">Output</span>
               <span
-                className={
-                  t.status === "Accepted" ? "text-green-400" : "text-red-400"
-                }
+                className={`px-2 py-1 rounded text-xs font-semibold ${isRunning
+                    ? "bg-yellow-500/20 text-yellow-300"
+                    : verdict === "Accepted"
+                      ? "bg-green-500/20 text-green-300"
+                      : verdict
+                        ? "bg-red-500/20 text-red-300"
+                        : "bg-gray-600 text-gray-200"
+                  }`}
               >
-                {t.status}
+                {isRunning ? "Running" : verdict || "Ready"}
               </span>
-            </p>
-
-            {t.output && <pre>Output: {t.output}</pre>}
-            {t.error && <pre className="text-red-400">Error: {t.error}</pre>}
+            </div>
+            <div className="text-xs text-gray-400">Console</div>
           </div>
-        ))}
+
+          {/* Tabs for testcases */}
+          <div className="px-3 py-2 border-b border-gray-800 overflow-x-auto">
+            <div className="flex gap-2 text-xs">
+              {(testResult.length ? testResult : problem.visibleTestCases || []).map((t, i) => {
+                const status = t.status;
+                const active = i === selectedTestIndex;
+                const statusClass = status === "Accepted"
+                  ? "text-green-300 border-green-500/60"
+                  : status
+                    ? "text-red-300 border-red-500/60"
+                    : "text-gray-300 border-gray-600";
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedTestIndex(i)}
+                    className={`px-3 py-1 rounded border bg-gray-900/60 hover:bg-gray-800/80 ${statusClass} ${active ? "ring-1 ring-blue-500" : ""
+                      }`}
+                  >
+                    {`Case ${i + 1}`}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="overflow-auto max-h-72 space-y-3 px-3 py-2 flex-1 min-h-0">
+            {/* Console output */}
+            <div className="bg-gray-900/70 rounded p-2 text-sm font-mono text-green-300 whitespace-pre-wrap min-h-[56px]">
+              {isRunning ? "Running..." : output || verdict || "No output yet"}
+            </div>
+
+            {/* Selected testcase details */}
+            <div>
+              <div className="text-xs uppercase tracking-wide text-gray-400 mb-2">Testcase</div>
+              {(() => {
+                const list = testResult.length ? testResult : problem.visibleTestCases || [];
+                if (!list.length) return <div className="text-xs text-gray-500">No testcases</div>;
+                const t = list[Math.min(selectedTestIndex, list.length - 1)];
+                const status = t.status;
+                return (
+                  <div className="border border-gray-700 rounded p-2 bg-gray-900/50 space-y-1">
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-gray-200">Testcase {t.testcase ?? (selectedTestIndex + 1)}</span>
+                      <span
+                        className={
+                          status === "Accepted"
+                            ? "text-green-400"
+                            : status
+                              ? "text-red-400"
+                              : "text-gray-400"
+                        }
+                      >
+                        {status || "Not run"}
+                      </span>
+                    </div>
+
+                    {t.input && (
+                      <pre className="text-xs text-gray-300 whitespace-pre-wrap">Input: {t.input}</pre>
+                    )}
+                    {(t.expected_output || t.output) && (
+                      <div className="space-y-1">
+                        {t.expected_output && (
+                          <pre className="text-xs text-gray-400 whitespace-pre-wrap">Expected: {t.expected_output}</pre>
+                        )}
+                        {t.output && (
+                          <pre className="text-xs text-green-300 whitespace-pre-wrap">Output: {t.output}</pre>
+                        )}
+                      </div>
+                    )}
+                    {t.error && (
+                      <pre className="text-xs text-red-400 whitespace-pre-wrap">Error: {t.error}</pre>
+                    )}
+                    {t.explanation && (
+                      <pre className="text-xs text-gray-400 whitespace-pre-wrap">Explanation: {t.explanation}</pre>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

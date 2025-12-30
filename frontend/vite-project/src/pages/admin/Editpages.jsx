@@ -10,10 +10,10 @@ const EditProblem = () => {
     title: "",
     description: "",
     difficulty: "",
-    startCode: "",
-    referenceSolution: "",
-    visibleTests: [{ input: "", output: "", explanation: "" }],
-    hiddenTests: [{ input: "", output: "", explanation: "" }],
+    startcode: [{ language: "", initialcode: "" }],
+    referencesolution: [{ language: "", initialcode: "" }],
+    visibleTestCases: [{ input: "", output: "", explanation: "" }],
+    hiddenTestCases: [{ input: "", output: "" }],
   });
 
   // Fetch existing problem
@@ -28,20 +28,18 @@ const EditProblem = () => {
           title: data?.title || "",
           description: data?.description || "",
           difficulty: data?.difficulty || "",
-          // startCode: data?.hiddenTestCases?.startcode || "",
-          // referenceSolution: data?.hiddenTestCases?.referencesolution || "",
-
-          startCode:
-            data?.startcode?.[0]?.initialcode || "",
-          referenceSolution:
-            data?.referencesolution?.[0]?.initialcode ||
-            "",
-          visibleTests: data?.visibleTestCases?.length
+          startcode: data?.startcode?.length
+            ? data.startcode
+            : [{ language: "", initialcode: "" }],
+          referencesolution: data?.referencesolution?.length
+            ? data.referencesolution
+            : [{ language: "", initialcode: "" }],
+          visibleTestCases: data?.visibleTestCases?.length
             ? data.visibleTestCases
             : [{ input: "", output: "", explanation: "" }],
-          hiddenTests: data?.hiddenTestCases?.length
+          hiddenTestCases: data?.hiddenTestCases?.length
             ? data.hiddenTestCases
-            : [{ input: "", output: "", explanation: "" }],
+            : [{ input: "", output: "" }],
         });
 
         // console.log("Form data set to:", formData);
@@ -77,6 +75,26 @@ const EditProblem = () => {
     setFormData({ ...formData, [type]: updated });
   };
 
+  // Handle code changes for startcode and referencesolution
+  const handleCodeChange = (type, index, field, value) => {
+    const updatedCode = [...formData[type]];
+    updatedCode[index][field] = value;
+    setFormData({ ...formData, [type]: updatedCode });
+  };
+
+  // Add or remove code entries
+  const addCodeEntry = (type) => {
+    setFormData({
+      ...formData,
+      [type]: [...formData[type], { language: "", initialcode: "" }],
+    });
+  };
+
+  const removeCodeEntry = (type, index) => {
+    const updated = formData[type].filter((_, i) => i !== index);
+    setFormData({ ...formData, [type]: updated });
+  };
+
   // Submit update
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -86,6 +104,7 @@ const EditProblem = () => {
       navigate("/admin");
     } catch (err) {
       console.log("Error updating problem:", err);
+      alert(err.response?.data?.message || "Error updating problem");
     }
   };
 
@@ -140,26 +159,144 @@ const EditProblem = () => {
 
         {/* Start Code */}
         <div>
-          <label className="block text-gray-400 mb-1">Starter Code</label>
-          <textarea
-            name="startCode"
-            value={formData.startCode}
-            onChange={handleChange}
-            rows="4"
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
-          ></textarea>
+          <h3 className="text-xl font-semibold text-green-400 mb-2">
+            💻 Starter Code
+          </h3>
+          {formData.startcode.map((code, index) => (
+            <div
+              key={index}
+              className="border border-gray-700 p-3 rounded mb-2 bg-gray-900"
+            >
+              <label className="block text-gray-400 text-sm mb-1">
+                Language
+              </label>
+              <select
+                value={code.language}
+                onChange={(e) =>
+                  handleCodeChange(
+                    "startcode",
+                    index,
+                    "language",
+                    e.target.value
+                  )
+                }
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
+                required
+              >
+                <option value="">Select Language</option>
+                <option value="cpp">C++</option>
+                <option value="java">Java</option>
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="c">C</option>
+              </select>
+
+              <label className="block text-gray-400 text-sm mb-1">
+                Initial Code
+              </label>
+              <textarea
+                value={code.initialcode}
+                onChange={(e) =>
+                  handleCodeChange(
+                    "startcode",
+                    index,
+                    "initialcode",
+                    e.target.value
+                  )
+                }
+                rows="6"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 font-mono"
+              ></textarea>
+
+              {formData.startcode.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeCodeEntry("startcode", index)}
+                  className="text-red-400 hover:text-red-600 text-sm"
+                >
+                  ❌ Remove
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => addCodeEntry("startcode")}
+            className="text-green-400 hover:text-green-600 text-sm"
+          >
+            ➕ Add Starter Code
+          </button>
         </div>
 
         {/* Reference Solution */}
         <div>
-          <label className="block text-gray-400 mb-1">Reference Solution</label>
-          <textarea
-            name="referenceSolution"
-            value={formData.referenceSolution}
-            onChange={handleChange}
-            rows="4"
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
-          ></textarea>
+          <h3 className="text-xl font-semibold text-yellow-400 mb-2">
+            ✅ Reference Solution
+          </h3>
+          {formData.referencesolution.map((code, index) => (
+            <div
+              key={index}
+              className="border border-gray-700 p-3 rounded mb-2 bg-gray-900"
+            >
+              <label className="block text-gray-400 text-sm mb-1">
+                Language
+              </label>
+              <select
+                value={code.language}
+                onChange={(e) =>
+                  handleCodeChange(
+                    "referencesolution",
+                    index,
+                    "language",
+                    e.target.value
+                  )
+                }
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
+                required
+              >
+                <option value="">Select Language</option>
+                <option value="cpp">C++</option>
+                <option value="java">Java</option>
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="c">C</option>
+              </select>
+
+              <label className="block text-gray-400 text-sm mb-1">
+                Reference Code
+              </label>
+              <textarea
+                value={code.initialcode}
+                onChange={(e) =>
+                  handleCodeChange(
+                    "referencesolution",
+                    index,
+                    "initialcode",
+                    e.target.value
+                  )
+                }
+                rows="6"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 font-mono"
+              ></textarea>
+
+              {formData.referencesolution.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeCodeEntry("referencesolution", index)}
+                  className="text-red-400 hover:text-red-600 text-sm"
+                >
+                  ❌ Remove
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => addCodeEntry("referencesolution")}
+            className="text-yellow-400 hover:text-yellow-600 text-sm"
+          >
+            ➕ Add Reference Solution
+          </button>
         </div>
 
         {/* Visible Test Cases */}
@@ -167,7 +304,7 @@ const EditProblem = () => {
           <h3 className="text-xl font-semibold text-blue-400 mb-2">
             🌟 Visible Test Cases
           </h3>
-          {formData.visibleTests.map((test, index) => (
+          {formData.visibleTestCases.map((test, index) => (
             <div
               key={index}
               className="border border-gray-700 p-3 rounded mb-2 bg-gray-900"
@@ -179,7 +316,7 @@ const EditProblem = () => {
                 value={test.input}
                 onChange={(e) =>
                   handleTestChange(
-                    "visibleTests",
+                    "visibleTestCases",
                     index,
                     "input",
                     e.target.value
@@ -196,7 +333,7 @@ const EditProblem = () => {
                 value={test.output}
                 onChange={(e) =>
                   handleTestChange(
-                    "visibleTests",
+                    "visibleTestCases",
                     index,
                     "output",
                     e.target.value
@@ -213,7 +350,7 @@ const EditProblem = () => {
                 value={test.explanation || ""}
                 onChange={(e) =>
                   handleTestChange(
-                    "visibleTests",
+                    "visibleTestCases",
                     index,
                     "explanation",
                     e.target.value
@@ -223,18 +360,20 @@ const EditProblem = () => {
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
               ></textarea>
 
-              <button
-                type="button"
-                onClick={() => removeTestCase("visibleTests", index)}
-                className="text-red-400 hover:text-red-600 text-sm"
-              >
-                ❌ Remove
-              </button>
+              {formData.visibleTestCases.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeTestCase("visibleTestCases", index)}
+                  className="text-red-400 hover:text-red-600 text-sm"
+                >
+                  ❌ Remove
+                </button>
+              )}
             </div>
           ))}
           <button
             type="button"
-            onClick={() => addTestCase("visibleTests")}
+            onClick={() => addTestCase("visibleTestCases")}
             className="text-blue-400 hover:text-blue-600 text-sm"
           >
             ➕ Add Visible Test Case
@@ -246,7 +385,7 @@ const EditProblem = () => {
           <h3 className="text-xl font-semibold text-purple-400 mb-2">
             🕵️ Hidden Test Cases
           </h3>
-          {formData.hiddenTests.map((test, index) => (
+          {formData.hiddenTestCases.map((test, index) => (
             <div
               key={index}
               className="border border-gray-700 p-3 rounded mb-2 bg-gray-900"
@@ -258,7 +397,7 @@ const EditProblem = () => {
                 value={test.input}
                 onChange={(e) =>
                   handleTestChange(
-                    "hiddenTests",
+                    "hiddenTestCases",
                     index,
                     "input",
                     e.target.value
@@ -275,7 +414,7 @@ const EditProblem = () => {
                 value={test.output}
                 onChange={(e) =>
                   handleTestChange(
-                    "hiddenTests",
+                    "hiddenTestCases",
                     index,
                     "output",
                     e.target.value
@@ -292,7 +431,7 @@ const EditProblem = () => {
                 value={test.explanation || ""}
                 onChange={(e) =>
                   handleTestChange(
-                    "hiddenTests",
+                    "hiddenTestCases",
                     index,
                     "explanation",
                     e.target.value
@@ -302,18 +441,20 @@ const EditProblem = () => {
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
               ></textarea>
 
-              <button
-                type="button"
-                onClick={() => removeTestCase("hiddenTests", index)}
-                className="text-red-400 hover:text-red-600 text-sm"
-              >
-                ❌ Remove
-              </button>
+              {formData.hiddenTestCases.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeTestCase("hiddenTestCases", index)}
+                  className="text-red-400 hover:text-red-600 text-sm"
+                >
+                  ❌ Remove
+                </button>
+              )}
             </div>
           ))}
           <button
             type="button"
-            onClick={() => addTestCase("hiddenTests")}
+            onClick={() => addTestCase("hiddenTestCases")}
             className="text-purple-400 hover:text-purple-600 text-sm"
           >
             ➕ Add Hidden Test Case
