@@ -68,6 +68,29 @@ const problemSchema = new Schema({
       },
     },
   ],
+  drivercode: [
+    {
+      language: {
+        type: String,
+        required: false,
+      },
+      // Optional top part (e.g., includes/imports)
+      importcode: {
+        type: String,
+        required: false,
+      },
+      // Optional bottom part (e.g., int main / runner)
+      maincode: {
+        type: String,
+        required: false,
+      },
+      // Legacy single-block driver (kept for backward compatibility)
+      initialcode: {
+        type: String,
+        required: false,
+      },
+    },
+  ],
   referencesolution: [
     {
       language: {

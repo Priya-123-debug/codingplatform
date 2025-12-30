@@ -34,8 +34,31 @@ const submitcode = async (req, res) => {
 
     const encode = (str) => Buffer.from(str || "", "utf-8").toString("base64");
 
+    const getFullSourceCode = () => {
+      const lang = String(language || "").toLowerCase();
+      const driver =
+        problemindatabase.drivercode?.find(
+          (d) => String(d.language || "").toLowerCase() === lang
+        ) || null;
+
+      if (driver && (driver.importcode || driver.maincode)) {
+        const top = driver.importcode || "";
+        const bottom = driver.maincode || "";
+        return `${top}\n${code}\n${bottom}`.trim();
+      }
+
+      // Fallback for legacy single-block driver
+      if (driver?.initialcode) {
+        return `${code}\n${driver.initialcode}`;
+      }
+
+      return code;
+    };
+
+    const fullSource = getFullSourceCode();
+
     const submissions = problemindatabase.hiddenTestCases.map((testcase) => ({
-      source_code: encode(code),
+      source_code: encode(fullSource),
       language_id: languageid,
       stdin: encode(testcase.input),
       expected_output: encode(testcase.output),
@@ -143,9 +166,32 @@ const runcode = async (req, res) => {
 
     const encode = (str) => Buffer.from(str || "", "utf-8").toString("base64");
 
+    const getFullSourceCode = () => {
+      const lang = String(language || "").toLowerCase();
+      const driver =
+        problemindatabase.drivercode?.find(
+          (d) => String(d.language || "").toLowerCase() === lang
+        ) || null;
+
+      if (driver && (driver.importcode || driver.maincode)) {
+        const top = driver.importcode || "";
+        const bottom = driver.maincode || "";
+        return `${top}\n${code}\n${bottom}`.trim();
+      }
+
+      // Fallback for legacy single-block driver
+      if (driver?.initialcode) {
+        return `${code}\n${driver.initialcode}`;
+      }
+
+      return code;
+    };
+
+    const fullSource = getFullSourceCode();
+
     const submissions = problemindatabase.visibleTestCases.map((testcase) => ({
       // Encode fields because Judge0 is called with base64_encoded=true
-      source_code: encode(code),
+      source_code: encode(fullSource),
       language_id: languageid,
       stdin: encode(testcase.input),
       expected_output: encode(testcase.output),

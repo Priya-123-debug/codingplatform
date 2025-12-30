@@ -11,6 +11,7 @@ const EditProblem = () => {
     description: "",
     difficulty: "",
     startcode: [{ language: "", initialcode: "" }],
+    drivercode: [{ language: "", importcode: "", maincode: "" }],
     referencesolution: [{ language: "", initialcode: "" }],
     visibleTestCases: [{ input: "", output: "", explanation: "" }],
     hiddenTestCases: [{ input: "", output: "" }],
@@ -31,6 +32,13 @@ const EditProblem = () => {
           startcode: data?.startcode?.length
             ? data.startcode
             : [{ language: "", initialcode: "" }],
+          drivercode: data?.drivercode?.length
+            ? data.drivercode.map((d) => ({
+                language: d.language || "",
+                importcode: d.importcode || "",
+                maincode: d.maincode || "",
+              }))
+            : [{ language: "", importcode: "", maincode: "" }],
           referencesolution: data?.referencesolution?.length
             ? data.referencesolution
             : [{ language: "", initialcode: "" }],
@@ -225,6 +233,93 @@ const EditProblem = () => {
             className="text-green-400 hover:text-green-600 text-sm"
           >
             ➕ Add Starter Code
+          </button>
+        </div>
+
+        {/* Driver Code (hidden) */}
+        <div>
+          <h3 className="text-xl font-semibold text-indigo-400 mb-2">
+            🚘 Driver Code (hidden)
+          </h3>
+          {formData.drivercode.map((code, index) => (
+            <div
+              key={index}
+              className="border border-gray-700 p-3 rounded mb-2 bg-gray-900"
+            >
+              <label className="block text-gray-400 text-sm mb-1">
+                Language
+              </label>
+              <select
+                value={code.language}
+                onChange={(e) =>
+                  handleCodeChange(
+                    "drivercode",
+                    index,
+                    "language",
+                    e.target.value
+                  )
+                }
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
+              >
+                <option value="">Select Language</option>
+                <option value="cpp">C++</option>
+                <option value="java">Java</option>
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="c">C</option>
+              </select>
+
+              <label className="block text-gray-400 text-sm mb-1">
+                Top code (imports, using directives, etc.)
+              </label>
+              <textarea
+                value={code.importcode || ""}
+                onChange={(e) =>
+                  handleCodeChange(
+                    "drivercode",
+                    index,
+                    "importcode",
+                    e.target.value
+                  )
+                }
+                rows="3"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 font-mono"
+              ></textarea>
+
+              <label className="block text-gray-400 text-sm mb-1">
+                Bottom code (int main / runner that uses Solution)
+              </label>
+              <textarea
+                value={code.maincode || ""}
+                onChange={(e) =>
+                  handleCodeChange(
+                    "drivercode",
+                    index,
+                    "maincode",
+                    e.target.value
+                  )
+                }
+                rows="4"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 font-mono"
+              ></textarea>
+
+              {formData.drivercode.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeCodeEntry("drivercode", index)}
+                  className="text-red-400 hover:text-red-600 text-sm"
+                >
+                  ❌ Remove
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => addCodeEntry("drivercode")}
+            className="text-indigo-400 hover:text-indigo-600 text-sm"
+          >
+            ➕ Add Driver Code
           </button>
         </div>
 

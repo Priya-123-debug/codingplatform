@@ -326,6 +326,7 @@ const ProblemForm = () => {
     visibleTestCases: [{ input: "", output: "", explanation: "" }],
     hiddenTestCases: [{ input: "", output: "" }],
     startcode: [{ language: "", initialcode: "" }],
+    drivercode: [{ language: "", importcode: "", maincode: "" }],
     referencesolution: [{ language: "", initialcode: "" }],
   });
 
@@ -386,7 +387,12 @@ const ProblemForm = () => {
   const addCode = (type) => {
     setFormData({
       ...formData,
-      [type]: [...formData[type], { language: "", initialcode: "" }],
+      [type]: [
+        ...formData[type],
+        type === "drivercode"
+          ? { language: "", importcode: "", maincode: "" }
+          : { language: "", initialcode: "" },
+      ],
     });
   };
   const removeCode = (type, index) => {
@@ -557,6 +563,57 @@ const ProblemForm = () => {
         >
           Add Hidden Test Case
         </button>
+
+        {/* Driver Code (hidden main/runner) */}
+        <div>
+          <h3 className="text-xl font-semibold mb-2">Driver Code (hidden)</h3>
+          {formData.drivercode.map((code, index) => (
+            <div key={index} className="mb-4 p-2 bg-gray-800 rounded">
+              <input
+                placeholder="Language"
+                value={code.language}
+                onChange={(e) =>
+                  updateCode("drivercode", index, "language", e.target.value)
+                }
+                className="w-full mb-1 p-1 rounded bg-gray-700"
+              />
+              <textarea
+                placeholder="Top code (imports, using directives, etc.)"
+                value={code.importcode || ""}
+                onChange={(e) =>
+                  updateCode("drivercode", index, "importcode", e.target.value)
+                }
+                className="w-full mb-1 p-1 rounded bg-gray-700 font-mono"
+                rows={3}
+              />
+              <textarea
+                placeholder="Bottom code (int main / runner that uses Solution)"
+                value={code.maincode || ""}
+                onChange={(e) =>
+                  updateCode("drivercode", index, "maincode", e.target.value)
+                }
+                className="w-full mb-1 p-1 rounded bg-gray-700 font-mono"
+                rows={4}
+              />
+              {formData.drivercode.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeCode("drivercode", index)}
+                  className="text-red-400 text-sm"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => addCode("drivercode")}
+            className="mb-4 px-4 py-2 bg-green-500 rounded"
+          >
+            Add Driver Code
+          </button>
+        </div>
 
         {/* Startcode */}
         <h3 className="text-xl mb-2">Start Code</h3>
