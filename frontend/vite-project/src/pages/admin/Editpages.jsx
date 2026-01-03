@@ -17,31 +17,29 @@ const EditProblem = () => {
     hiddenTestCases: [{ input: "", output: "" }],
   });
 
+  const [dbDriverCodes, setDbDriverCodes] = useState([]);
+  const [dbReferenceSolutions, setDbReferenceSolutions] = useState([]);
+  const [dbStartCodes, setDbStartCodes] = useState([]);
+
   // Fetch existing problem
   useEffect(() => {
     const fetchProblem = async () => {
       try {
         const res = await axiosClient.get(`/problem/problembyid/${id}`);
         const data = res.data;
-        // console.log("Fetched problem:", data);
+
+        // Store database driver codes and reference solutions
+        setDbDriverCodes(data?.drivercode || []);
+        setDbReferenceSolutions(data?.referencesolution || []);
+        setDbStartCodes(data?.startcode || []);
 
         setFormData({
           title: data?.title || "",
           description: data?.description || "",
           difficulty: data?.difficulty || "",
-          startcode: data?.startcode?.length
-            ? data.startcode
-            : [{ language: "", initialcode: "" }],
-          drivercode: data?.drivercode?.length
-            ? data.drivercode.map((d) => ({
-                language: d.language || "",
-                importcode: d.importcode || "",
-                maincode: d.maincode || "",
-              }))
-            : [{ language: "", importcode: "", maincode: "" }],
-          referencesolution: data?.referencesolution?.length
-            ? data.referencesolution
-            : [{ language: "", initialcode: "" }],
+          startcode: [{ language: "", initialcode: "" }],
+          drivercode: [{ language: "", importcode: "", maincode: "" }],
+          referencesolution: [{ language: "", initialcode: "" }],
           visibleTestCases: data?.visibleTestCases?.length
             ? data.visibleTestCases
             : [{ input: "", output: "", explanation: "" }],
@@ -49,8 +47,6 @@ const EditProblem = () => {
             ? data.hiddenTestCases
             : [{ input: "", output: "" }],
         });
-
-        // console.log("Form data set to:", formData);
       } catch (err) {
         console.log("Error fetching problem:", err);
       }
@@ -101,6 +97,49 @@ const EditProblem = () => {
   const removeCodeEntry = (type, index) => {
     const updated = formData[type].filter((_, i) => i !== index);
     setFormData({ ...formData, [type]: updated });
+  };
+
+  // Handle starter code language selection - render if exists in db, otherwise leave empty
+  const handleStartCodeLanguageChange = (index, language) => {
+    const dbCode = dbStartCodes.find((code) => code.language === language);
+    
+    const updatedCode = [...formData.startcode];
+    updatedCode[index] = {
+      language: language,
+      initialcode: dbCode?.initialcode || "",
+    };
+    
+    setFormData({ ...formData, startcode: updatedCode });
+  };
+
+  // Handle driver code language selection - render if exists in db, otherwise leave empty
+  const handleDriverCodeLanguageChange = (index, language) => {
+    const dbCode = dbDriverCodes.find((code) => code.language === language);
+    
+    const updatedCode = [...formData.drivercode];
+    updatedCode[index] = {
+      language: language,
+      importcode: dbCode?.importcode || "",
+      maincode: dbCode?.maincode || "",
+    };
+    
+    setFormData({ ...formData, drivercode: updatedCode });
+  };
+
+  // Handle reference solution language selection - render if exists in db, otherwise leave empty
+  const handleReferenceSolutionLanguageChange = (index, language) => {
+    // Search for this language in the database reference solutions
+    const dbSolution = dbReferenceSolutions.find(
+      (code) => code.language === language
+    );
+    
+    const updatedCode = [...formData.referencesolution];
+    updatedCode[index] = {
+      language: language,
+      initialcode: dbSolution?.initialcode || "",
+    };
+    
+    setFormData({ ...formData, referencesolution: updatedCode });
   };
 
   // Submit update
@@ -181,12 +220,7 @@ const EditProblem = () => {
               <select
                 value={code.language}
                 onChange={(e) =>
-                  handleCodeChange(
-                    "startcode",
-                    index,
-                    "language",
-                    e.target.value
-                  )
+                  handleStartCodeLanguageChange(index, e.target.value)
                 }
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
                 required
@@ -252,12 +286,7 @@ const EditProblem = () => {
               <select
                 value={code.language}
                 onChange={(e) =>
-                  handleCodeChange(
-                    "drivercode",
-                    index,
-                    "language",
-                    e.target.value
-                  )
+                  handleDriverCodeLanguageChange(index, e.target.value)
                 }
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
               >
@@ -339,12 +368,7 @@ const EditProblem = () => {
               <select
                 value={code.language}
                 onChange={(e) =>
-                  handleCodeChange(
-                    "referencesolution",
-                    index,
-                    "language",
-                    e.target.value
-                  )
+                  handleReferenceSolutionLanguageChange(index, e.target.value)
                 }
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
                 required

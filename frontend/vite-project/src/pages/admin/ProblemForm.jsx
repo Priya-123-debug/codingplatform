@@ -569,14 +569,26 @@ const ProblemForm = () => {
           <h3 className="text-xl font-semibold mb-2">Driver Code (hidden)</h3>
           {formData.drivercode.map((code, index) => (
             <div key={index} className="mb-4 p-2 bg-gray-800 rounded">
-              <input
-                placeholder="Language"
+              <label className="block text-gray-400 text-sm mb-1">
+                Language
+              </label>
+              <select
                 value={code.language}
                 onChange={(e) =>
                   updateCode("drivercode", index, "language", e.target.value)
                 }
-                className="w-full mb-1 p-1 rounded bg-gray-700"
-              />
+                className="w-full mb-2 p-2 rounded bg-gray-700"
+              >
+                <option value="">Select Language</option>
+                <option value="cpp">C++</option>
+                <option value="java">Java</option>
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="c">C</option>
+              </select>
+              <label className="block text-gray-400 text-sm mb-1">
+                Top code (imports, using directives, etc.)
+              </label>
               <textarea
                 placeholder="Top code (imports, using directives, etc.)"
                 value={code.importcode || ""}
@@ -586,6 +598,9 @@ const ProblemForm = () => {
                 className="w-full mb-1 p-1 rounded bg-gray-700 font-mono"
                 rows={3}
               />
+              <label className="block text-gray-400 text-sm mb-1">
+                Bottom code (int main / runner that uses Solution)
+              </label>
               <textarea
                 placeholder="Bottom code (int main / runner that uses Solution)"
                 value={code.maincode || ""}

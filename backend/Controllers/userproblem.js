@@ -283,7 +283,7 @@ const getproblembyid = async (req, res) => {
     const getproblem = await problem
       .findById(id)
       .select(
-        "_id title description difficulty tags visibleTestCases hiddenTestCases startcode referencesolution problemcreator"
+        "_id title description difficulty tags visibleTestCases hiddenTestCases startcode referencesolution problemcreator drivercode"
       );
 
     /// select ke ander jo bhi rahega whi frontend ko jaiyega
