@@ -40,6 +40,7 @@ public class Main {
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTagsOpen, setIsTagsOpen] = useState(false);
   const [selectedTestIndex, setSelectedTestIndex] = useState(0);
 
@@ -120,6 +121,39 @@ public class Main {
       setOutput(err.response?.data || "Error running code");
     } finally {
       setIsRunning(false);
+    }
+  };
+
+  /* ---------------- Submit Code ---------------- */
+  const handleSubmitCode = async () => {
+    try {
+      setIsSubmitting(true);
+      setOutput("Submitting...");
+      setVerdict("");
+      setTestResult([]);
+
+      const res = await axiosClient.post(`/submission/submit/${id}`, {
+        language,
+        code,
+      });
+
+      const submission = res.data;
+      const status = submission.status || "Submitted";
+      const passed = submission.testCasepassed ?? 0;
+      const total = submission.testCasetotal ?? 0;
+      const message =
+        status === "Accepted"
+          ? `Accepted (${passed}/${total} hidden tests passed)`
+          : submission.errormessage || status;
+
+      setVerdict(status);
+      setOutput(message);
+    } catch (err) {
+      console.error(err);
+      setVerdict("Not Accepted");
+      setOutput(err.response?.data || "Error submitting code");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -212,11 +246,20 @@ public class Main {
           <div>
             <button
               onClick={handleRunCode}
-              className="bg-gray-700 px-4 py-2 rounded mr-3"
+              disabled={isRunning || isSubmitting}
+              className={`bg-gray-700 px-4 py-2 rounded mr-3 ${
+                isRunning || isSubmitting ? "opacity-60 cursor-not-allowed" : ""
+              }`}
             >
               Run
             </button>
-            <button className="bg-yellow-500 px-4 py-2 rounded text-black">
+            <button
+              onClick={handleSubmitCode}
+              disabled={isRunning || isSubmitting}
+              className={`bg-yellow-500 px-4 py-2 rounded text-black ${
+                isRunning || isSubmitting ? "opacity-60 cursor-not-allowed" : ""
+              }`}
+            >
               Submit
             </button>
           </div>
@@ -257,16 +300,21 @@ public class Main {
             <div className="flex items-center gap-2 text-sm font-semibold">
               <span className="text-gray-200">Output</span>
               <span
-                className={`px-2 py-1 rounded text-xs font-semibold ${isRunning
-                  ? "bg-yellow-500/20 text-yellow-300"
-                  : verdict === "Accepted"
-                    ? "bg-green-500/20 text-green-300"
-                    : verdict
-                      ? "bg-red-500/20 text-red-300"
-                      : "bg-gray-600 text-gray-200"
-                  }`}
+                className={`px-2 py-1 rounded text-xs font-semibold ${
+                  isRunning || isSubmitting
+                    ? "bg-yellow-500/20 text-yellow-300"
+                    : verdict === "Accepted"
+                      ? "bg-green-500/20 text-green-300"
+                      : verdict
+                        ? "bg-red-500/20 text-red-300"
+                        : "bg-gray-600 text-gray-200"
+                }`}
               >
-                {isRunning ? "Running" : verdict || "Ready"}
+                {isRunning
+                  ? "Running"
+                  : isSubmitting
+                    ? "Submitting"
+                    : verdict || "Ready"}
               </span>
             </div>
             <div className="text-xs text-gray-400">Console</div>
