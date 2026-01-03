@@ -50,7 +50,7 @@ const register = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true, // JS cannot access it
       maxAge: 60 * 60 * 1000, // 1 hour
-      sameSite: "lax", // works with localhost frontend
+      sameSite: "none", // works with localhost frontend
       secure: false, // true in production with HTTPS
     });
 
