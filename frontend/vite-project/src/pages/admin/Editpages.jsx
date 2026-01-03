@@ -20,6 +20,15 @@ const EditProblem = () => {
   const [dbDriverCodes, setDbDriverCodes] = useState([]);
   const [dbReferenceSolutions, setDbReferenceSolutions] = useState([]);
   const [dbStartCodes, setDbStartCodes] = useState([]);
+  const [selectedLanguage, setSelectedLanguage] = useState("cpp");
+
+  const availableLanguages = [
+    { value: "cpp", label: "C++" },
+    { value: "java", label: "Java" },
+    { value: "python", label: "Python" },
+    { value: "javascript", label: "JavaScript" },
+    { value: "c", label: "C" },
+  ];
 
   // Fetch existing problem
   useEffect(() => {
@@ -33,13 +42,29 @@ const EditProblem = () => {
         setDbReferenceSolutions(data?.referencesolution || []);
         setDbStartCodes(data?.startcode || []);
 
+        // Initialize with default selected language (cpp)
+        const defaultLang = "cpp";
+        const dbStartCode = (data?.startcode || []).find((code) => code.language === defaultLang);
+        const dbDriverCode = (data?.drivercode || []).find((code) => code.language === defaultLang);
+        const dbRefSolution = (data?.referencesolution || []).find((code) => code.language === defaultLang);
+
         setFormData({
           title: data?.title || "",
           description: data?.description || "",
           difficulty: data?.difficulty || "",
-          startcode: [{ language: "", initialcode: "" }],
-          drivercode: [{ language: "", importcode: "", maincode: "" }],
-          referencesolution: [{ language: "", initialcode: "" }],
+          startcode: [{
+            language: defaultLang,
+            initialcode: dbStartCode?.initialcode || "",
+          }],
+          drivercode: [{
+            language: defaultLang,
+            importcode: dbDriverCode?.importcode || "",
+            maincode: dbDriverCode?.maincode || "",
+          }],
+          referencesolution: [{
+            language: defaultLang,
+            initialcode: dbRefSolution?.initialcode || "",
+          }],
           visibleTestCases: data?.visibleTestCases?.length
             ? data.visibleTestCases
             : [{ input: "", output: "", explanation: "" }],
@@ -100,6 +125,43 @@ const EditProblem = () => {
   };
 
   // Handle starter code language selection - render if exists in db, otherwise leave empty
+  const handleLanguageTabChange = (language) => {
+    setSelectedLanguage(language);
+    
+    // Update startcode for the selected language
+    const dbStartCode = dbStartCodes.find((code) => code.language === language);
+    const updatedStartCode = [...formData.startcode];
+    updatedStartCode[0] = {
+      language: language,
+      initialcode: dbStartCode?.initialcode || "",
+    };
+    
+    // Update drivercode for the selected language
+    const dbDriverCode = dbDriverCodes.find((code) => code.language === language);
+    const updatedDriverCode = [...formData.drivercode];
+    updatedDriverCode[0] = {
+      language: language,
+      importcode: dbDriverCode?.importcode || "",
+      maincode: dbDriverCode?.maincode || "",
+    };
+    
+    // Update referencesolution for the selected language
+    const dbRefSolution = dbReferenceSolutions.find((code) => code.language === language);
+    const updatedRefSolution = [...formData.referencesolution];
+    updatedRefSolution[0] = {
+      language: language,
+      initialcode: dbRefSolution?.initialcode || "",
+    };
+    
+    setFormData({
+      ...formData,
+      startcode: updatedStartCode,
+      drivercode: updatedDriverCode,
+      referencesolution: updatedRefSolution,
+    });
+  };
+
+  // Handle starter code language selection - render if exists in db, otherwise leave empty
   const handleStartCodeLanguageChange = (index, language) => {
     const dbCode = dbStartCodes.find((code) => code.language === language);
     
@@ -156,8 +218,8 @@ const EditProblem = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-[#1e1e1e] p-6 rounded-xl shadow-lg border border-gray-700">
-      <h2 className="text-2xl font-bold text-[#f89f1b] mb-4">
+    <div className="max-w-4xl mx-auto bg-[#1e1e1e] p-4 sm:p-6 rounded-xl shadow-lg border border-gray-700">
+      <h2 className="text-xl sm:text-2xl font-bold text-[#f89f1b] mb-4">
         ✏️ Edit Problem
       </h2>
 
@@ -204,8 +266,103 @@ const EditProblem = () => {
           </select>
         </div>
 
+        {/* Language Tabs */}
+        <div className="mb-6">
+          <h3 className="text-lg sm:text-xl font-semibold text-blue-400 mb-3">
+            💻 Code Sections (by Language)
+          </h3>
+          
+          {/* Language Tabs */}
+          <div className="flex gap-2 mb-4 border-b border-gray-700 overflow-x-auto pb-2">
+            {availableLanguages.map((lang) => (
+              <button
+                key={lang.value}
+                type="button"
+                onClick={() => handleLanguageTabChange(lang.value)}
+                className={`px-3 sm:px-4 py-2 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${
+                  selectedLanguage === lang.value
+                    ? "text-blue-400 border-b-2 border-blue-400"
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Starter Code for selected language */}
+          <div className="mb-6">
+            <h4 className="text-base sm:text-lg font-semibold text-green-400 mb-2">
+              Starter Code
+            </h4>
+            <div className="border border-gray-700 p-2 sm:p-3 rounded bg-gray-900">
+              <textarea
+                value={formData.startcode[0]?.initialcode || ""}
+                onChange={(e) =>
+                  handleCodeChange("startcode", 0, "initialcode", e.target.value)
+                }
+                rows="8"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 font-mono text-sm"
+                placeholder={`Enter starter code for ${availableLanguages.find(l => l.value === selectedLanguage)?.label}...`}
+              ></textarea>
+            </div>
+          </div>
+
+          {/* Driver Code for selected language */}
+          <div className="mb-6">
+            <h4 className="text-base sm:text-lg font-semibold text-indigo-400 mb-2">
+              Driver Code (Hidden)
+            </h4>
+            <div className="border border-gray-700 p-2 sm:p-3 rounded bg-gray-900">
+              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
+                Top code (imports, using directives, etc.)
+              </label>
+              <textarea
+                value={formData.drivercode[0]?.importcode || ""}
+                onChange={(e) =>
+                  handleCodeChange("drivercode", 0, "importcode", e.target.value)
+                }
+                rows="4"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-3 font-mono text-sm"
+                placeholder="Enter imports and class definition..."
+              ></textarea>
+
+              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
+                Bottom code (int main / runner that uses Solution)
+              </label>
+              <textarea
+                value={formData.drivercode[0]?.maincode || ""}
+                onChange={(e) =>
+                  handleCodeChange("drivercode", 0, "maincode", e.target.value)
+                }
+                rows="12"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 font-mono text-sm"
+                placeholder="Enter main function or runner code..."
+              ></textarea>
+            </div>
+          </div>
+
+          {/* Reference Solution for selected language */}
+          <div className="mb-6">
+            <h4 className="text-base sm:text-lg font-semibold text-yellow-400 mb-2">
+              Reference Solution
+            </h4>
+            <div className="border border-gray-700 p-2 sm:p-3 rounded bg-gray-900">
+              <textarea
+                value={formData.referencesolution[0]?.initialcode || ""}
+                onChange={(e) =>
+                  handleCodeChange("referencesolution", 0, "initialcode", e.target.value)
+                }
+                rows="12"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 font-mono text-sm"
+                placeholder={`Enter reference solution for ${availableLanguages.find(l => l.value === selectedLanguage)?.label}...`}
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
         {/* Start Code */}
-        <div>
+        <div style={{ display: "none" }}>
           <h3 className="text-xl font-semibold text-green-400 mb-2">
             💻 Starter Code
           </h3>
@@ -271,7 +428,7 @@ const EditProblem = () => {
         </div>
 
         {/* Driver Code (hidden) */}
-        <div>
+        <div style={{ display: "none" }}>
           <h3 className="text-xl font-semibold text-indigo-400 mb-2">
             🚘 Driver Code (hidden)
           </h3>
@@ -353,7 +510,7 @@ const EditProblem = () => {
         </div>
 
         {/* Reference Solution */}
-        <div>
+        <div style={{ display: "none" }}>
           <h3 className="text-xl font-semibold text-yellow-400 mb-2">
             ✅ Reference Solution
           </h3>
@@ -420,15 +577,15 @@ const EditProblem = () => {
 
         {/* Visible Test Cases */}
         <div>
-          <h3 className="text-xl font-semibold text-blue-400 mb-2">
+          <h3 className="text-lg sm:text-xl font-semibold text-blue-400 mb-2">
             🌟 Visible Test Cases
           </h3>
           {formData.visibleTestCases.map((test, index) => (
             <div
               key={index}
-              className="border border-gray-700 p-3 rounded mb-2 bg-gray-900"
+              className="border border-gray-700 p-2 sm:p-3 rounded mb-2 bg-gray-900"
             >
-              <label className="block text-gray-400 text-sm mb-1">
+              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
                 Input (Visible #{index + 1})
               </label>
               <textarea
@@ -445,7 +602,7 @@ const EditProblem = () => {
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
               ></textarea>
 
-              <label className="block text-gray-400 text-sm mb-1">
+              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
                 Expected Output
               </label>
               <textarea
@@ -459,10 +616,10 @@ const EditProblem = () => {
                   )
                 }
                 rows="2"
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 text-sm"
               ></textarea>
 
-              <label className="block text-gray-400 text-sm mb-1">
+              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
                 Explanation
               </label>
               <textarea
@@ -476,14 +633,14 @@ const EditProblem = () => {
                   )
                 }
                 rows="2"
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 text-sm"
               ></textarea>
 
               {formData.visibleTestCases.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeTestCase("visibleTestCases", index)}
-                  className="text-red-400 hover:text-red-600 text-sm"
+                  className="text-red-400 hover:text-red-600 text-xs sm:text-sm"
                 >
                   ❌ Remove
                 </button>
@@ -493,7 +650,7 @@ const EditProblem = () => {
           <button
             type="button"
             onClick={() => addTestCase("visibleTestCases")}
-            className="text-blue-400 hover:text-blue-600 text-sm"
+            className="text-blue-400 hover:text-blue-600 text-xs sm:text-sm"
           >
             ➕ Add Visible Test Case
           </button>
@@ -501,15 +658,15 @@ const EditProblem = () => {
 
         {/* Hidden Test Cases */}
         <div>
-          <h3 className="text-xl font-semibold text-purple-400 mb-2">
+          <h3 className="text-lg sm:text-xl font-semibold text-purple-400 mb-2">
             🕵️ Hidden Test Cases
           </h3>
           {formData.hiddenTestCases.map((test, index) => (
             <div
               key={index}
-              className="border border-gray-700 p-3 rounded mb-2 bg-gray-900"
+              className="border border-gray-700 p-2 sm:p-3 rounded mb-2 bg-gray-900"
             >
-              <label className="block text-gray-400 text-sm mb-1">
+              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
                 Input (Hidden #{index + 1})
               </label>
               <textarea
@@ -523,10 +680,10 @@ const EditProblem = () => {
                   )
                 }
                 rows="2"
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 text-sm"
               ></textarea>
 
-              <label className="block text-gray-400 text-sm mb-1">
+              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
                 Expected Output
               </label>
               <textarea
@@ -540,10 +697,10 @@ const EditProblem = () => {
                   )
                 }
                 rows="2"
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 text-sm"
               ></textarea>
 
-              <label className="block text-gray-400 text-sm mb-1">
+              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
                 Explanation
               </label>
               <textarea
@@ -557,14 +714,14 @@ const EditProblem = () => {
                   )
                 }
                 rows="2"
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 text-sm"
               ></textarea>
 
               {formData.hiddenTestCases.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeTestCase("hiddenTestCases", index)}
-                  className="text-red-400 hover:text-red-600 text-sm"
+                  className="text-red-400 hover:text-red-600 text-xs sm:text-sm"
                 >
                   ❌ Remove
                 </button>
@@ -574,7 +731,7 @@ const EditProblem = () => {
           <button
             type="button"
             onClick={() => addTestCase("hiddenTestCases")}
-            className="text-purple-400 hover:text-purple-600 text-sm"
+            className="text-purple-400 hover:text-purple-600 text-xs sm:text-sm"
           >
             ➕ Add Hidden Test Case
           </button>
@@ -583,7 +740,7 @@ const EditProblem = () => {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-[#f89f1b] hover:bg-[#e98c00] text-black font-semibold py-2 rounded"
+          className="w-full bg-[#f89f1b] hover:bg-[#e98c00] text-black font-semibold py-2 sm:py-3 rounded text-sm sm:text-base"
         >
           💾 Update Problem
         </button>
