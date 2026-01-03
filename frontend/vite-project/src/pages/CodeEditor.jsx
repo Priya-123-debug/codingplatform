@@ -131,11 +131,13 @@ public class Main {
       setOutput("Submitting...");
       setVerdict("");
       setTestResult([]);
-
+      console.log("1. Submit button clicked")
+       console.log("3. Sending request to backend...");
       const res = await axiosClient.post(`/submission/submit/${id}`, {
         language,
         code,
       });
+      console.log("4. Response received:", res.data);
 
       const submission = res.data;
       const status = submission.status || "Submitted";
