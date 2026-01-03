@@ -318,6 +318,15 @@ import axiosClient from "../../utilis/axiosClient";
 const ProblemForm = () => {
   const navigate = useNavigate();
 
+  const [selectedLanguage, setSelectedLanguage] = useState("cpp");
+  const availableLanguages = [
+    { value: "cpp", label: "C++" },
+    { value: "java", label: "Java" },
+    { value: "python", label: "Python" },
+    { value: "javascript", label: "JavaScript" },
+    { value: "c", label: "C" },
+  ];
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -325,9 +334,9 @@ const ProblemForm = () => {
     tags: [],
     visibleTestCases: [{ input: "", output: "", explanation: "" }],
     hiddenTestCases: [{ input: "", output: "" }],
-    startcode: [{ language: "", initialcode: "" }],
-    drivercode: [{ language: "", importcode: "", maincode: "" }],
-    referencesolution: [{ language: "", initialcode: "" }],
+    startcode: [{ language: "cpp", initialcode: "" }],
+    drivercode: [{ language: "cpp", importcode: "", maincode: "" }],
+    referencesolution: [{ language: "cpp", initialcode: "" }],
   });
 
   // Basic input change
@@ -397,6 +406,63 @@ const ProblemForm = () => {
   };
   const removeCode = (type, index) => {
     const newArr = formData[type].filter((_, i) => i !== index);
+    setFormData({ ...formData, [type]: newArr });
+  };
+
+  // Handle language tab change
+  const handleLanguageTabChange = (language) => {
+    setSelectedLanguage(language);
+    
+    // Get current code for selected language or create empty entry
+    const getCodeForLanguage = (type) => {
+      const existingCode = formData[type].find((code) => code.language === language);
+      if (existingCode) return existingCode;
+      
+      return type === "drivercode"
+        ? { language, importcode: "", maincode: "" }
+        : { language, initialcode: "" };
+    };
+
+    const startCode = getCodeForLanguage("startcode");
+    const driverCode = getCodeForLanguage("drivercode");
+    const refSolution = getCodeForLanguage("referencesolution");
+
+    // Update formData to show code for selected language
+    const updatedStartCode = [...formData.startcode.filter(c => c.language !== language), startCode];
+    const updatedDriverCode = [...formData.drivercode.filter(c => c.language !== language), driverCode];
+    const updatedRefSolution = [...formData.referencesolution.filter(c => c.language !== language), refSolution];
+
+    setFormData({
+      ...formData,
+      startcode: updatedStartCode,
+      drivercode: updatedDriverCode,
+      referencesolution: updatedRefSolution,
+    });
+  };
+
+  // Get code for current selected language
+  const getCurrentLanguageCode = (type) => {
+    return formData[type].find((code) => code.language === selectedLanguage) || 
+      (type === "drivercode" 
+        ? { language: selectedLanguage, importcode: "", maincode: "" }
+        : { language: selectedLanguage, initialcode: "" });
+  };
+
+  // Update code for current selected language
+  const updateCurrentLanguageCode = (type, field, value) => {
+    const newArr = [...formData[type]];
+    const index = newArr.findIndex((code) => code.language === selectedLanguage);
+    
+    if (index !== -1) {
+      newArr[index][field] = value;
+    } else {
+      const newEntry = type === "drivercode"
+        ? { language: selectedLanguage, importcode: "", maincode: "" }
+        : { language: selectedLanguage, initialcode: "" };
+      newEntry[field] = value;
+      newArr.push(newEntry);
+    }
+    
     setFormData({ ...formData, [type]: newArr });
   };
 
@@ -564,6 +630,103 @@ const ProblemForm = () => {
           Add Hidden Test Case
         </button>
 
+        {/* Language Tabs for Code Sections */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold text-blue-400 mb-3">
+            💻 Code Sections (by Language)
+          </h3>
+          
+          {/* Language Tabs */}
+          <div className="flex gap-2 mb-4 border-b border-gray-700 overflow-x-auto pb-2">
+            {availableLanguages.map((lang) => (
+              <button
+                key={lang.value}
+                type="button"
+                onClick={() => handleLanguageTabChange(lang.value)}
+                className={`px-4 py-2 font-semibold transition-colors whitespace-nowrap ${
+                  selectedLanguage === lang.value
+                    ? "text-blue-400 border-b-2 border-blue-400"
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Starter Code for selected language */}
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold text-green-400 mb-2">
+              Starter Code
+            </h4>
+            <div className="border border-gray-700 p-3 rounded bg-gray-800">
+              <textarea
+                value={getCurrentLanguageCode("startcode").initialcode}
+                onChange={(e) =>
+                  updateCurrentLanguageCode("startcode", "initialcode", e.target.value)
+                }
+                rows="8"
+                className="w-full p-2 rounded bg-gray-700 text-white font-mono"
+                placeholder={`Enter starter code for ${availableLanguages.find(l => l.value === selectedLanguage)?.label}...`}
+              ></textarea>
+            </div>
+          </div>
+
+          {/* Driver Code for selected language */}
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold text-indigo-400 mb-2">
+              Driver Code (Hidden)
+            </h4>
+            <div className="border border-gray-700 p-3 rounded bg-gray-800">
+              <label className="block text-gray-400 text-sm mb-1">
+                Top code (imports, using directives, etc.)
+              </label>
+              <textarea
+                value={getCurrentLanguageCode("drivercode").importcode || ""}
+                onChange={(e) =>
+                  updateCurrentLanguageCode("drivercode", "importcode", e.target.value)
+                }
+                rows="4"
+                className="w-full p-2 rounded bg-gray-700 text-white mb-3 font-mono"
+                placeholder="Enter imports and class definition..."
+              ></textarea>
+
+              <label className="block text-gray-400 text-sm mb-1">
+                Bottom code (int main / runner that uses Solution)
+              </label>
+              <textarea
+                value={getCurrentLanguageCode("drivercode").maincode || ""}
+                onChange={(e) =>
+                  updateCurrentLanguageCode("drivercode", "maincode", e.target.value)
+                }
+                rows="6"
+                className="w-full p-2 rounded bg-gray-700 text-white font-mono"
+                placeholder="Enter main function or runner code..."
+              ></textarea>
+            </div>
+          </div>
+
+          {/* Reference Solution for selected language */}
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold text-yellow-400 mb-2">
+              Reference Solution
+            </h4>
+            <div className="border border-gray-700 p-3 rounded bg-gray-800">
+              <textarea
+                value={getCurrentLanguageCode("referencesolution").initialcode}
+                onChange={(e) =>
+                  updateCurrentLanguageCode("referencesolution", "initialcode", e.target.value)
+                }
+                rows="8"
+                className="w-full p-2 rounded bg-gray-700 text-white font-mono"
+                placeholder={`Enter reference solution for ${availableLanguages.find(l => l.value === selectedLanguage)?.label}...`}
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        {/* Old code sections - hidden */}
+        <div style={{ display: "none" }}>
         {/* Driver Code (hidden main/runner) */}
         <div>
           <h3 className="text-xl font-semibold mb-2">Driver Code (hidden)</h3>
@@ -742,8 +905,9 @@ const ProblemForm = () => {
         >
           Add Reference Solution
         </button>
+        </div>
 
-        <button type="submit" className="px-6 py-2 bg-blue-500 rounded">
+        <button type="submit" className="px-6 py-2 bg-blue-500 rounded hover:bg-blue-600 transition-colors">
           Save Problem
         </button>
       </form>
