@@ -7,9 +7,28 @@ const authRouter = require("./routes/userauth");
 const problemrouter = require("./routes/problemcreate");
 const submitrouter = require("./routes/submit");
 const cors = require("cors");
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     credentials: true,
+//   })
+// );
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://coderhoister-kvmr.vercel.app",
+  "https://coderhoister-kvmr-iey5ajiut-supriya-kumaris-projects.vercel.app"
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        return callback(new Error("CORS policy violation"), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
