@@ -30,6 +30,10 @@ const problemSchema = new Schema({
   },
   visibleTestCases: [
     {
+      displayInput: {
+        type: String,
+        required: true,
+      },
       input: {
         type: String,
         required: true,
@@ -46,6 +50,10 @@ const problemSchema = new Schema({
   ],
   hiddenTestCases: [
     {
+      displayInput: {
+        type: String,
+        required: true,
+      },
       input: {
         type: String,
         required: true,

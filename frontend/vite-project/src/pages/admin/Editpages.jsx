@@ -13,8 +13,8 @@ const EditProblem = () => {
     startcode: [{ language: "", initialcode: "" }],
     drivercode: [{ language: "", importcode: "", maincode: "" }],
     referencesolution: [{ language: "", initialcode: "" }],
-    visibleTestCases: [{ input: "", output: "", explanation: "" }],
-    hiddenTestCases: [{ input: "", output: "" }],
+    visibleTestCases: [{ displayInput: "", input: "", output: "", explanation: "" }],
+    hiddenTestCases: [{ displayInput: "", input: "", output: "" }],
   });
 
   const [dbDriverCodes, setDbDriverCodes] = useState([]);
@@ -95,7 +95,7 @@ const EditProblem = () => {
   const addTestCase = (type) => {
     setFormData({
       ...formData,
-      [type]: [...formData[type], { input: "", output: "", explanation: "" }],
+      [type]: [...formData[type], { displayInput: "", input: "", output: "", explanation: "" }],
     });
   };
 
@@ -585,8 +585,26 @@ const EditProblem = () => {
               key={index}
               className="border border-gray-700 p-2 sm:p-3 rounded mb-2 bg-gray-900"
             >
-              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
-                Input (Visible #{index + 1})
+              <label className="block text-green-400 text-xs sm:text-sm font-semibold mb-1">
+                Display Input (User-friendly format)
+              </label>
+              <textarea
+                value={test.displayInput || ""}
+                onChange={(e) =>
+                  handleTestChange(
+                    "visibleTestCases",
+                    index,
+                    "displayInput",
+                    e.target.value
+                  )
+                }
+                rows="2"
+                placeholder="e.g., nums = [2, 7, 11, 15], target = 9"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
+              ></textarea>
+
+              <label className="block text-blue-400 text-xs sm:text-sm font-semibold mb-1">
+                Actual Input (Backend format)
               </label>
               <textarea
                 value={test.input}
@@ -599,10 +617,11 @@ const EditProblem = () => {
                   )
                 }
                 rows="2"
+                placeholder="e.g., 4 2 7 11 15 9"
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2"
               ></textarea>
 
-              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
+              <label className="block text-yellow-400 text-xs sm:text-sm font-semibold mb-1">
                 Expected Output
               </label>
               <textarea
@@ -619,7 +638,7 @@ const EditProblem = () => {
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 text-sm"
               ></textarea>
 
-              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
+              <label className="block text-purple-400 text-xs sm:text-sm font-semibold mb-1">
                 Explanation
               </label>
               <textarea
@@ -666,8 +685,26 @@ const EditProblem = () => {
               key={index}
               className="border border-gray-700 p-2 sm:p-3 rounded mb-2 bg-gray-900"
             >
-              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
-                Input (Hidden #{index + 1})
+              <label className="block text-green-400 text-xs sm:text-sm font-semibold mb-1">
+                Display Input (User-friendly format)
+              </label>
+              <textarea
+                value={test.displayInput || ""}
+                onChange={(e) =>
+                  handleTestChange(
+                    "hiddenTestCases",
+                    index,
+                    "displayInput",
+                    e.target.value
+                  )
+                }
+                rows="2"
+                placeholder="e.g., nums = [2, 7, 11, 15], target = 9"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 text-sm"
+              ></textarea>
+
+              <label className="block text-blue-400 text-xs sm:text-sm font-semibold mb-1">
+                Actual Input (Backend format)
               </label>
               <textarea
                 value={test.input}
@@ -680,10 +717,11 @@ const EditProblem = () => {
                   )
                 }
                 rows="2"
+                placeholder="e.g., 4 2 7 11 15 9"
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 text-sm"
               ></textarea>
 
-              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
+              <label className="block text-yellow-400 text-xs sm:text-sm font-semibold mb-1">
                 Expected Output
               </label>
               <textarea
@@ -693,23 +731,6 @@ const EditProblem = () => {
                     "hiddenTestCases",
                     index,
                     "output",
-                    e.target.value
-                  )
-                }
-                rows="2"
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 mb-2 text-sm"
-              ></textarea>
-
-              <label className="block text-gray-400 text-xs sm:text-sm mb-1">
-                Explanation
-              </label>
-              <textarea
-                value={test.explanation || ""}
-                onChange={(e) =>
-                  handleTestChange(
-                    "hiddenTestCases",
-                    index,
-                    "explanation",
                     e.target.value
                   )
                 }

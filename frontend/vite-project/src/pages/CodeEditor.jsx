@@ -103,9 +103,17 @@ public class Main {
 
       console.log("Run Code Response:", res.data);
 
-      // ✅ BACKEND RESPONSE
+      // ✅ Merge backend results with displayInput from problem data
+      const enrichedResults = res.data.results.map((result, index) => {
+        const originalTestCase = problem.visibleTestCases?.[index];
+        return {
+          ...result,
+          displayInput: originalTestCase?.displayInput || result.displayInput,
+        };
+      });
+
       setVerdict(res.data.verdict);
-      setTestResult(res.data.results);
+      setTestResult(enrichedResults);
       setOutput(res.data.verdict);
     } catch (err) {
       console.error(err);
@@ -140,16 +148,18 @@ public class Main {
         <h3 className="text-lg font-semibold mb-2">Example Test Cases</h3>
         <ul className="space-y-2">
           {problem.visibleTestCases.map((test, i) => (
-            <li key={i} className="bg-gray-700 p-2 rounded">
+            <li key={i} className="bg-gray-700 p-2 rounded text-sm">
               <p>
-                <b>Input:</b> {test.input}
+                <b>Input:</b> {test.displayInput || test.input}
               </p>
               <p>
                 <b>Output:</b> {test.output}
               </p>
-              <p>
-                <b>Explanation:</b> {test.explanation}
-              </p>
+              {test.explanation && (
+                <p>
+                  <b>Explanation:</b> {test.explanation}
+                </p>
+              )}
             </li>
           ))}
         </ul>
@@ -313,8 +323,13 @@ public class Main {
                       </span>
                     </div>
 
-                    {t.input && (
-                      <pre className="text-xs text-gray-300 whitespace-pre-wrap">Input: {t.input}</pre>
+                    {/* {t.input && (
+                      <div>
+                        <pre className="text-xs text-gray-300 whitespace-pre-wrap">Actual Input: {t.input}</pre>
+                      </div>
+                    )} */}
+                    {t.displayInput && (
+                      <pre className="text-xs text-green-300 whitespace-pre-wrap font-semibold">Input: {t.displayInput}</pre>
                     )}
                     {(t.expected_output || t.output) && (
                       <div className="space-y-1">

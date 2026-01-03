@@ -332,8 +332,8 @@ const ProblemForm = () => {
     description: "",
     difficulty: "easy",
     tags: [],
-    visibleTestCases: [{ input: "", output: "", explanation: "" }],
-    hiddenTestCases: [{ input: "", output: "" }],
+    visibleTestCases: [{ displayInput: "", input: "", output: "", explanation: "" }],
+    hiddenTestCases: [{ displayInput: "", input: "", output: "" }],
     startcode: [{ language: "cpp", initialcode: "" }],
     drivercode: [{ language: "cpp", importcode: "", maincode: "" }],
     referencesolution: [{ language: "cpp", initialcode: "" }],
@@ -358,7 +358,7 @@ const ProblemForm = () => {
       ...formData,
       visibleTestCases: [
         ...formData.visibleTestCases,
-        { input: "", output: "", explanation: "" },
+        { displayInput: "", input: "", output: "", explanation: "" },
       ],
     });
   const updateVisibleTestCase = (index, key, value) => {
@@ -375,7 +375,7 @@ const ProblemForm = () => {
   const addHiddenTestCase = () =>
     setFormData({
       ...formData,
-      hiddenTestCases: [...formData.hiddenTestCases, { input: "", output: "" }],
+      hiddenTestCases: [...formData.hiddenTestCases, { displayInput: "", input: "", output: "" }],
     });
   const updateHiddenTestCase = (index, key, value) => {
     const newCases = [...formData.hiddenTestCases];
@@ -546,24 +546,37 @@ const ProblemForm = () => {
         <h3 className="text-xl mb-2">Visible Test Cases</h3>
         {formData.visibleTestCases.map((tc, i) => (
           <div key={i} className="mb-4 p-2 bg-gray-800 rounded">
+            <label className="block text-gray-400 text-sm mb-1">Display Input (User-friendly format)</label>
             <input
-              placeholder="Input"
+              placeholder="e.g., nums = [2, 7, 11, 15], target = 9"
+              value={tc.displayInput}
+              onChange={(e) =>
+                updateVisibleTestCase(i, "displayInput", e.target.value)
+              }
+              className="w-full mb-2 p-1 rounded bg-gray-700"
+              required
+            />
+            <label className="block text-gray-400 text-sm mb-1">Actual Input (Backend format)</label>
+            <input
+              placeholder="e.g., 4 2 7 11 15 9"
               value={tc.input}
               onChange={(e) =>
                 updateVisibleTestCase(i, "input", e.target.value)
               }
-              className="w-full mb-1 p-1 rounded bg-gray-700"
+              className="w-full mb-2 p-1 rounded bg-gray-700"
               required
             />
+            <label className="block text-gray-400 text-sm mb-1">Output</label>
             <input
               placeholder="Output"
               value={tc.output}
               onChange={(e) =>
                 updateVisibleTestCase(i, "output", e.target.value)
               }
-              className="w-full mb-1 p-1 rounded bg-gray-700"
+              className="w-full mb-2 p-1 rounded bg-gray-700"
               required
             />
+            <label className="block text-gray-400 text-sm mb-1">Explanation</label>
             <input
               placeholder="Explanation"
               value={tc.explanation}
@@ -595,20 +608,32 @@ const ProblemForm = () => {
         <h3 className="text-xl mb-2">Hidden Test Cases</h3>
         {formData.hiddenTestCases.map((tc, i) => (
           <div key={i} className="mb-4 p-2 bg-gray-800 rounded">
+            <label className="block text-gray-400 text-sm mb-1">Display Input (User-friendly format)</label>
             <input
-              placeholder="Input"
-              value={tc.input}
-              onChange={(e) => updateHiddenTestCase(i, "input", e.target.value)}
-              className="w-full mb-1 p-1 rounded bg-gray-700"
+              placeholder="e.g., nums = [2, 7, 11, 15], target = 9"
+              value={tc.displayInput}
+              onChange={(e) =>
+                updateHiddenTestCase(i, "displayInput", e.target.value)
+              }
+              className="w-full mb-2 p-1 rounded bg-gray-700"
               required
             />
+            <label className="block text-gray-400 text-sm mb-1">Actual Input (Backend format)</label>
+            <input
+              placeholder="e.g., 4 2 7 11 15 9"
+              value={tc.input}
+              onChange={(e) => updateHiddenTestCase(i, "input", e.target.value)}
+              className="w-full mb-2 p-1 rounded bg-gray-700"
+              required
+            />
+            <label className="block text-gray-400 text-sm mb-1">Output</label>
             <input
               placeholder="Output"
               value={tc.output}
               onChange={(e) =>
                 updateHiddenTestCase(i, "output", e.target.value)
               }
-              className="w-full mb-1 p-1 rounded bg-gray-700"
+              className="w-full mb-2 p-1 rounded bg-gray-700"
               required
             />
             {formData.hiddenTestCases.length > 1 && (
