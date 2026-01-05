@@ -45,8 +45,8 @@ const Login = () => {
 		}
 	}, [isAuthenticated, navigate, user]);
 	const onSubmit = (data) => {
+		// console.log("Form Data:", data);
 		dispatch(loginuser(data));
-
 	};
 
 	const fillAdmin = () => {

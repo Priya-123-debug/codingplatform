@@ -13,11 +13,9 @@ const cors = require("cors");
 //     credentials: true,
 //   })
 // );
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://coderhoister-kvmr.vercel.app",
-  "https://coderhoister-kvmr-iey5ajiut-supriya-kumaris-projects.vercel.app"
-];
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : ["http://localhost:5173"];
 
 app.use(
   cors({

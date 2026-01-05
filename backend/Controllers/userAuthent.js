@@ -50,8 +50,8 @@ const register = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true, // JS cannot access it
       maxAge: 60 * 60 * 1000, // 1 hour
-      sameSite: "none", // works with localhost frontend
-      secure: false, // true in production with HTTPS
+      sameSite: "none", // works with cross-origin requests
+      secure: true, // required for sameSite: none
     });
 
     res.status(201).json({
@@ -93,7 +93,12 @@ const login = async (req, res) => {
       _id: user._id,
       role: user.role, // <-- include role
     };
-    res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+    res.cookie("token", token, {
+      httpOnly: true, // JS cannot access it
+      maxAge: 60 * 60 * 1000, // 1 hour
+      sameSite: "none", // works with cross-origin requests
+      secure: true, // required for sameSite: none
+    });
     res.status(200).json({
       user: reply,
       message: "user logged in successfully",
