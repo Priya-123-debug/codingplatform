@@ -9,7 +9,7 @@ const submitrouter = require("./routes/submit");
 const cors = require("cors");
 app.use(
   cors({
-    origin: "https://codingplatformservice-cbty-n5vdz8myt-supriya-kumaris-projects.vercel.app",
+    origin: "https://codingplatformservice-2lb7-hiubn40tr-supriya-kumaris-projects.vercel.app",
     credentials: true,
   })
 );
