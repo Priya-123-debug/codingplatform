@@ -7,28 +7,33 @@ const authRouter = require("./routes/userauth");
 const problemrouter = require("./routes/problemcreate");
 const submitrouter = require("./routes/submit");
 const cors = require("cors");
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173",
-//     credentials: true,
-//   })
-// );
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        return callback(new Error("CORS policy violation"), false);
-      }
-      return callback(null, true);
-    },
+    origin: "https://codingplatformservice-cbty-n5vdz8myt-supriya-kumaris-projects.vercel.app",
     credentials: true,
   })
 );
-app.set("trust proxy", 1);
+// const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
+
+
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       // allow requests with no origin (like curl or Postman)
+//       if (!origin) return callback(null, true);
+
+//       // check if the origin is allowed
+//       if (!allowedOrigins.includes(origin)) {
+//         return callback(new Error("CORS policy violation"), false);
+//       }
+
+//       return callback(null, true);
+//     },
+//     credentials: true,
+//   })
+// );
+
+
 app.use(express.json());
 app.use(cookieparser());
 app.use("/user", authRouter);
