@@ -30,10 +30,7 @@ const Login = () => {
 		formState: { errors },
 	} = useForm({ resolver: zodResolver(signupSchema) });
 	useEffect(() => {
-		// console.log("useEffect fired", { isAuthenticated, user });
-		// if(isAuthenticated){
-		// 	navigate('/');
-		// }
+		
 
 		if (isAuthenticated && user) {
 			// console.log(user)
@@ -59,21 +56,7 @@ const Login = () => {
 		setValue("password", "12345678");
 	};
 
-	// 	const onSubmit = (data) => {
-	//   dispatch(loginuser(data)).then(() => setJustLoggedIn(true));
-	// };
-	// const onSubmit = (data) => {
-	//   dispatch(loginuser(data)).then((action) => {
-	//     // Check if login was successful
-	//     if (action.payload) {
-	//       if (action.payload.role === "admin") {
-	//         navigate("/admin");
-	//       } else {
-	//         navigate("/");
-	//       }
-	//     }
-	//   });
-	// };
+	
 
 	return (
 

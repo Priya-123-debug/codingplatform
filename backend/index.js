@@ -7,12 +7,33 @@ const authRouter = require("./routes/userauth");
 const problemrouter = require("./routes/problemcreate");
 const submitrouter = require("./routes/submit");
 const cors = require("cors");
+// app.use(
+//   cors({
+//     origin: "https://codingplatformservice-2lb7-hiubn40tr-supriya-kumaris-projects.vercel.app",
+//     credentials: true,
+//   })
+// );
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://codingplatformservice-2lb7-hiubn40tr-supriya-kumaris-projects.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "https://codingplatformservice-2lb7-hiubn40tr-supriya-kumaris-projects.vercel.app",
+    origin: function (origin, callback) {
+      // allow REST tools or server-to-server calls
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
     credentials: true,
   })
 );
+
 // const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 
 
